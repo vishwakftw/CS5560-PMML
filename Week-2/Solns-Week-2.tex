@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+
+\title{Solutions to the Assignment - 2 : CS5560 - \\
+Probabilistic Models in Machine Learning}
+\author{Vishwak Srinivasan\\
+\texttt{CS15BTECH11043}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercises from ML: A Probabilistic Perspective}
+\subsection*{Exercise 3.6}
+\begin{flushleft}
+Consider \(\mathcal{D} = \{x_{1}, x_{2}, \ldots, x_{m}\}\). The log-likelihood function for the \(i^{th}\) sample is given by:
+\begin{equation}
+\log p_{\lambda}(x_{i}) = -\lambda + x_{i} \log \lambda - \log (x!)
+\end{equation}
+
+With a slight abuse of notation, we can write the log-likelihood of the dataset \(\mathcal{D}\) as:
+\begin{equation}
+g(\lambda) = \log p_{\lambda}(\mathcal{D}) = \sum_{i=1}^{m} \left(-\lambda + x_{i} \log \lambda - \log (x_{i}!)\right) = -m\lambda + \log \lambda \displaystyle \sum_{i=1}^{m} x_{i} - \sum_{i=1}^{m} \log(x_{i}!)
+\end{equation}
+
+Since the log function is a monotonically increasing function, the value of \(x\) obtained by maximizing \(f(x)\) would be the same as that obtained by maximizing \(\log f(x)\). Note that the domain of \(\lambda\) is open, meaning we don't have to check for end-points, but just the existence of local maximum in the domain. Taking the derivative of \(g(\lambda)\) w.r.t. \(\lambda\) and setting to 0 we have:
+\begin{equation}
+g'(\lambda) = -m + \frac{1}{\lambda} \sum_{i=1}^{m} x_{i} = 0 \Rightarrow \lambda^{*} = \frac{1}{m} \sum_{i=1}^{m} x_{i}
+\end{equation}
+
+Note that \(\displaystyle \sum_{i=1}^{m} x_{i}\) is greater than 0\footnote{If all \(x_{i}\)s are 0, then the MLE is undefined, I think}, and hence a valid estimate.
+\end{flushleft}
+
+\subsection*{Exercise 3.11(a)}
+\begin{flushleft}
+Just as in Exercise 3.6, we consider the log-likelihood for the \(i^{th}\) sample, and collectively the log-likelihood of the dataset:
+\begin{gather}
+\log p_{\theta}(x_{i}) = \log \theta - \theta x_{i} \\
+g(\theta) = \log p_{\theta}(\mathcal{D}) = \displaystyle \sum_{i=1}^{m} \log p_{\theta}(x_{i}) = m\log\theta - \theta \sum_{i=1}^{m} x_{i}
+\end{gather}
+
+Note that the domain is open again. Taking the derivative of \(g(\theta)\) w.r.t. \(\theta\) and setting to 0 gives us:
+\begin{equation}
+g'(\theta) = \frac{m}{\theta} - \sum_{i=1}^{m} x_{i} = 0 \Rightarrow \hat{\theta} = \frac{m}{\displaystyle \sum_{i=1}^{m} x_{i}} \footnote{Assuming that \(x_{i} \neq 0\) for all \(i\)}
+\end{equation}
+
+Since the samples are positive, this is a valid estimate.
+\end{flushleft}
+
+\subsection*{Exercise 3.11(b)}
+\begin{flushleft}
+Now, we can substitute the observed values into the expression for the MLE, giving us:
+\begin{equation}
+\hat{\theta} = \frac{3}{5 + 6 + 4} = \frac{1}{5}
+\end{equation}
+\end{flushleft}
+
+\subsection*{Exercise 4.1}
+\begin{flushleft}
+To show that \(X\) and \(Y\) are uncorrelated, it suffices to show that \(\mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y] = 0\). Now, \(Y = X^{2}\). These means that \(\mathbb{E}[X^3] - \mathbb{E}[X]\mathbb{E}[X^2] = \frac{(b + a)(b^2 + a^2)}{4} - \frac{(b + a)(b^2 + a^2 + ab)}{6}\). Substituting \(a = -1, b = 1\), we get the above expression to be \(0\), meaning no correlation.
+\end{flushleft}
+
+\subsection*{Exercise 4.2}
+\subsubsection*{Part a}
+\begin{flushleft}
+Note that \(P(Y \leq y) = P(WX \leq y)\). Now by total probability, we have:
+\begin{multline}
+P(Y \leq y) = P(WX \leq y) = P(WX \leq y | W = -1)P(W = -1) + P(WX \leq y | W = 1)P(W = 1)\\= P(-X \leq y)P(W = -1) + P(X \leq y)P(W = 1)
+\end{multline}
+
+This means that:
+\begin{equation}
+\Rightarrow P(Y \leq y) = \frac{P(-X \leq y)}{2} + \frac{P(X \leq y)}{2} = P(X \leq y)
+\end{equation}
+The final step was due to the fact that \(X\) is \(\mathcal{N}(0, 1)\), meaning it is symmetric about 0. This in turn means that \(X\) and \(-X\) are distributed in the same manner.
+
+\[P(Y \leq y) = P(X \leq y) \Rightarrow Y \sim \mathcal{N}(0, 1)\]
+\end{flushleft}
+
+\subsubsection*{Part b}
+\begin{flushleft}
+Note that \(\mathbb{E}[X] = \mathbb{E}[Y] = 0\) since \(X, Y \sim \mathcal{N}(0, 1)\). Hence, we need to show that \(\mathbb{E}[XY] = 0\). Note that \(\mathbb{E}[XWX] = \mathbb{E}[X^2W] = \mathbb{E}[\mathbb{E}[X^2W | W]]\). Now:
+\begin{equation}
+\mathbb{E}[\mathbb{E}[X^2W | W]] = \mathbb{E}[X^2] \frac{1}{2} + \mathbb{E}[-X^2] \frac{1}{2} = 0
+\end{equation}
+This shows that \(\mathrm{cov}(X, Y) = 0\).
+\end{flushleft}
+
+\subsection*{Exercise 4.4}
+Note that if \(Y = aX + b\), then: \(\sigma_{Y} = |a|\sigma_{X}\) and \(\mathbb{E}[Y] = a\mathbb{E}[X] + b\). Denoting \(\mathbb{E}[X]\) as \(\mu\), the covariance between \(X\) and \(Y\) can be given by:
+\begin{equation}
+\mathrm{cov}(X, Y) = \mathbb{E}[aX^2 + bX] - \mu(a\mu + b) = a\sigma_{X}^{2} + a\mu^{2} + b\mu - a\mu^{2} - b\mu = a\sigma_{X}^{2}
+\end{equation}
+Facts used are: \(\mathbb{E}[X^2] = \mathrm{Var}[X] + \mathbb{E}(X)^2\) and \(\mathbb{E}[aX] = a\mathbb{E}[X]\). Now the correlation coefficient is:
+\begin{equation}
+\rho(X, Y) = \frac{\mathrm{cov}(X, Y)}{\sigma_{X}\sigma_{Y}} = \frac{a\sigma_{X}^{2}}{|a|\sigma_{X}^{2}} = \frac{a}{|a|} =
+\begin{cases}
+1 & \text{ if } a > 0 \\
+-1 & \text{ if } a < 0
+\end{cases}
+\end{equation}
+\end{document}
