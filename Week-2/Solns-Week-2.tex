@@ -2,7 +2,7 @@
 \usepackage[margin=0.6in]{geometry}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{url}
+\usepackage{bookmark}
 
 \title{Solutions to the Assignment - 2 : CS5560 - \\
 Probabilistic Models in Machine Learning}
@@ -139,5 +139,43 @@ Facts used are: \(\mathbb{E}[X^2] = \mathrm{Var}[X] + \mathbb{E}(X)^2\) and \(\m
 -1 & \text{ if } a < 0
 \end{cases}
 \end{equation}
+\end{flushleft}
+
+\section*{Starred Problems}
+\subsection*{Problem 1: Asymptotic distribution of MLE}
+\begin{flushleft}
+This proof is based on of on proofs given in textbooks and lecture notes\footnote{Mathematical Statistics and Data Analysis by John A Rice, All of Statistics by Larry Wasserman, MIT OCW Course notes}. This is also referred to in Chapter 6, Page 194 of the textbook \emph{Machine Learning: A Probabilistic Perspective} by Kevin Murphy. This proof will also only discuss the existence of such an asymptotic distribution and not the exact parameters of the asymptotic distribution.
+\(\newline\)
+
+First, assume the MLE is computed and denoted by \(\hat{\theta}\). For convenience, let us take the log-likelihood of the dataset given by:
+\begin{equation}
+LL_{n}(\theta) = \frac{1}{n} \sum_{i=1}^{n} \log p_{\theta}(x_{i})
+\end{equation}
+
+Since \(\hat{\theta}\) minimizes the KL-divergence between the unknown distribution and the parameterized distribution, and consequently maximizes the log-likelihood, we know that:
+\begin{equation}
+LL_{n}'(\theta) = \frac{\partial LL_{n}(\theta)}{\partial \theta} = 0
+\end{equation}
+
+Let \(\theta_{0}\) be the true unknown parameter for the distribution. By the mean value theorem over the function\(LL_{n}'(\theta)\), \(\exists \theta_{1} \in [\theta_{0}, \hat{\theta}]\), s.t.
+\begin{equation}
+\label{mvt}
+\frac{LL_{n}'(\theta_{0}) - LL_{n}'(\hat{\theta})}{\theta_{0} - \hat{\theta}} = LL_{n}''(\theta_{1}) \Rightarrow \sqrt{n}(\hat{\theta} - \theta_{0}) = \frac{\sqrt{n}(LL_{n}'(\hat{\theta}) - LL_{n}'(\theta_{0}))}{LL_{n}''(\theta_{1})} = \frac{-\sqrt{n}LL_{n}'(\theta_{0})}{LL_{n}''(\theta_{1})}
+\end{equation}
+
+One of the properties of \(\theta_{0}\) is that, the true expected log-likelihood is maximized by \(\theta_{0}\). Therefore, \(LL'(\theta_{0}) = 0\), where \(LL(\theta) = \mathbb{E}_{\theta_{0}}(\log p_{\theta}(x))\). This can be proved via Jensen's inequality, and is as follows. We basically want \(LL(\theta) < LL(\theta_{0})\) for all \(\theta \in \Theta\), where \(\Theta\) is the set of all valid choice of parameters.
+\begin{equation}
+LL(\theta) - L(\theta_{0}) = \mathbb{E}_{\theta_{0}}\log \left(\frac{p_{\theta} (x)}{p_{\theta_{0}}(x)}\right) \leq \log\mathbb{E}\left(\frac{p_{\theta} (x)}{p_{\theta_{0}}(x)}\right) = \log\int \left(\frac{p_{\theta} (x)}{p_{\theta_{0}}(x)}\right) p_{\theta_{0}}(x) dx = \log 1 = 0
+\end{equation}
+
+Because of this property, we can say that:
+\begin{equation}
+\sqrt{n} LL_{n}'(\theta_{0}) = \sqrt{n}\left(\sum_{i=1}^{n} p_{\theta_{0}}'(x_{i}) \right) = \sqrt{n}\left(\sum_{i=1}^{n}p_{\theta_{0}}'(x_{i}) - \mathbb{E}_{\theta_{0}}p_{\theta_{0}}'(x_{i})\right)
+\end{equation}\footnote{Similar step as done in Hoeffding's inequality}
+
+Now one can draw analogy to the CLT, and claim that \(\sqrt{n} LL_{n}'(\theta_{0}) \rightarrow \mathcal{N}(0, \mathrm{Var}_{\theta_{0}}[p_{\theta_{0}}'(x_{i})])\).
+\(\newline\)
+
+From Eqn \ref{mvt}, we can see that \(\sqrt{n}(\hat{\theta} - \theta_{0}) \rightarrow \mathcal{N}(0, \Lambda)\), where \(\Lambda = \frac{\mathrm{Var}_{\theta_{0}}[p_{\theta_{0}}'(x_{i})]}{LL_{n}''(\theta_{1})}\). Thus the asymptotic distribution of \(\hat{\theta}\) is normal with zero mean.
 \end{flushleft}
 \end{document}
