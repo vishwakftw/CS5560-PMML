@@ -34,6 +34,22 @@ g'(\lambda) = -m + \frac{1}{\lambda} \sum_{i=1}^{m} x_{i} = 0 \Rightarrow \lambd
 Note that \(\displaystyle \sum_{i=1}^{m} x_{i}\) is greater than 0\footnote{If all \(x_{i}\)s are 0, then the MLE is undefined, I think}, and hence a valid estimate.
 \end{flushleft}
 
+\subsection*{Exercise 3.8(a)}
+\begin{flushleft}
+Assume that \(-a \leq \{x_{1}, x_{2}, \ldots, x_{n}\} \leq a\)
+Consider the log-likelihood of a sample as:
+\begin{equation}
+\log p(x_{i}) = -\log (2a)
+\end{equation}
+
+The log-likelihood of the dataset is hence:
+\begin{equation}
+\log p(\mathcal{D}) = \sum_{i=1}^{n} -\log (2a) = -n \log (2a)
+\end{equation}
+
+Note that, for \(a > 0\), this function is monotonically decreasing. From the given dataset, the maximum value of \(a\) that will maximize the log-likelihood is \(a^{*} = \max_{\mathcal{D}}{x_{i}}\) which is basically the largest value of the dataset.
+\end{flushleft}
+
 \subsection*{Exercise 3.11(a)}
 \begin{flushleft}
 Just as in Exercise 3.6, we consider the log-likelihood for the \(i^{th}\) sample, and collectively the log-likelihood of the dataset:
@@ -89,7 +105,28 @@ Note that \(\mathbb{E}[X] = \mathbb{E}[Y] = 0\) since \(X, Y \sim \mathcal{N}(0,
 This shows that \(\mathrm{cov}(X, Y) = 0\).
 \end{flushleft}
 
+\subsection*{Exercise 4.3:}
+\begin{flushleft}
+The Cauchy-Schwartz inequality for random variables is:
+\begin{equation}
+(\mathbb{E}[XY])^{2} \leq \mathbb{E}[X^2] \mathbb{E}[Y^2]
+\end{equation}
+
+A simple proof is as follows: consider \(f(t) = \mathbb{E}[(X + tY)^2] = t^2\mathbb{E}[Y^2] + 2t\mathbb{E}[XY] + \mathbb{E}[X^2]\). Note that \(f(t) \geq 0\). This means that the discriminant is \(\leq 0\). 
+\begin{equation}
+D \leq 0 \Rightarrow 4(\mathbb{E}[XY])^2 - 4\mathbb{E}[Y^2]\mathbb{E}[X^2] \leq 0 \Rightarrow (\mathbb{E}[XY])^2 \leq \mathbb{E}[X^2] \mathbb{E}[Y^2]
+\end{equation}
+
+Note that \(\rho(X, Y) = \frac{\mathrm{cov}(X, Y)}{\mathrm{Var}[X]\mathrm{Var}[Y]}\). \(\mathrm{cov}(X, Y) = \mathbb{E}[(X - \mu_{X})(Y - \mu_{Y})]\) and \(\mathrm{Var}[X] = \mathbb{E}[(X - \mu_{X})^2]\). Apply the Cauchy-Schwartz inequality over \(\hat{X} = X - \mu_{X}\) and \(\hat{Y} = Y - \mu_{Y}\). Thus:
+\begin{gather}
+|\mathbb{E}[\hat{X}\hat{Y}]| \leq \sqrt{\mathbb{E}[\hat{X}^2]}\sqrt{\mathbb{E}[\hat{Y}^2]} \Rightarrow \frac{|\mathbb{E}[\hat{X}\hat{Y}]|}{\sqrt{\mathbb{E}[\hat{X}^2]}\sqrt{\mathbb{E}[\hat{Y}^2]}} \leq 1 \\
+\frac{|\mathbb{E}[(X - \mu_{X})(Y - \mu_{Y})]|}{\sqrt{\mathbb{E}[(X - \mu_{X})^2}\sqrt{\mathbb{E}[(Y - \mu_{Y})^2}} = \frac{|\mathrm{cov}(X, Y)|}{\sqrt{\mathrm{Var}[X]}\sqrt{\mathrm{Var}[Y]}} \leq 1 \Rightarrow -1 \leq \frac{\mathrm{cov}(X, Y)}{\sqrt{\mathrm{Var}[X]}\sqrt{\mathrm{Var}[Y]}} \leq 1 \\
+\rho(X, Y) \leq [-1, 1]
+\end{gather}
+\end{flushleft}
+
 \subsection*{Exercise 4.4}
+\begin{flushleft}
 Note that if \(Y = aX + b\), then: \(\sigma_{Y} = |a|\sigma_{X}\) and \(\mathbb{E}[Y] = a\mathbb{E}[X] + b\). Denoting \(\mathbb{E}[X]\) as \(\mu\), the covariance between \(X\) and \(Y\) can be given by:
 \begin{equation}
 \mathrm{cov}(X, Y) = \mathbb{E}[aX^2 + bX] - \mu(a\mu + b) = a\sigma_{X}^{2} + a\mu^{2} + b\mu - a\mu^{2} - b\mu = a\sigma_{X}^{2}
@@ -102,4 +139,5 @@ Facts used are: \(\mathbb{E}[X^2] = \mathrm{Var}[X] + \mathbb{E}(X)^2\) and \(\m
 -1 & \text{ if } a < 0
 \end{cases}
 \end{equation}
+\end{flushleft}
 \end{document}
