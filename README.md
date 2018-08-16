@@ -6,3 +6,6 @@ Coursework pertaining to CS5560 : Probabilistic Models in Machine Learning offer
 
 ### Week - 2
 + Maximum Likelihood Estimation, Covariances and Correlation. Exercises from Kevin Murphy, _Machine Learning: A Probabilistic Perspective_.
+
+### Week -3
++ Implementation of a Multivariate Gaussian Regression model and inference from data
