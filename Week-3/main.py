@@ -10,10 +10,11 @@ p.add_argument('--testing_dataset', type=str, required=True,
                                     help='Source for the testing dataset, in CSV format')
 p.add_argument('--input_dim', type=int, required=True, help='Dimensionality of input data')
 p.add_argument('--output_dim', type=int, required=True, help='Dimensionality of output data')
+p.add_argument('--shapecheck', action='store_true', help='Check intermediate shapes for correctness')
 p = p.parse_args()
 
-tr_data = np.genfromtxt(p.training_dataset)
-te_data = np.genfromtxt(p.testing_dataset)
+tr_data = np.genfromtxt(p.training_dataset, delimiter=',')
+te_data = np.genfromtxt(p.testing_dataset, delimiter=',')
 
 # Dataset checks
 if tr_data.shape[1] != (p.input_dim + p.output_dim):
@@ -36,12 +37,24 @@ tr_data_cov11, tr_data_cov12 = np.hsplit(tr_data_cov1, [p.input_dim])
 tr_data_cov21, tr_data_cov22 = np.hsplit(tr_data_cov2, [p.input_dim])
 
 # Size checks
-assert tr_data_mean1.shape == (p.input_dim,), "Mean component 1 shape incorrect"
-assert tr_data_mean2.shape == (p.output_dim,), "Mean component 2 shape incorrect"
-assert tr_data_cov11.shape == (p.input_dim, p.input_dim), "Covariance component 11 shape incorrect"
-assert tr_data_cov12.shape == (p.input_dim, p.output_dim), "Covariance component 12 shape incorrect"
-assert tr_data_cov21.shape == (p.output_dim, p.input_dim), "Covariance component 21 shape incorrect"
-assert tr_data_cov22.shape == (p.input_dim, p.output_dim), "Covariance component 22 shape incorrect"
+if p.shapecheck:
+    assert tr_data_mean1.shape == (p.input_dim,), "Mean component 1 shape incorrect"
+    assert tr_data_mean2.shape == (p.output_dim,), "Mean component 2 shape incorrect"
+    assert tr_data_cov11.shape == (p.input_dim, p.input_dim), "Covariance component 11 shape incorrect"
+    assert tr_data_cov12.shape == (p.input_dim, p.output_dim), "Covariance component 12 shape incorrect"
+    assert tr_data_cov21.shape == (p.output_dim, p.input_dim), "Covariance component 21 shape incorrect"
+    assert tr_data_cov22.shape == (p.output_dim, p.output_dim), "Covariance component 22 shape incorrect"
 
 # Building the function
 fhat_x = lambda x: tr_data_mean2 - np.matmul(np.matmul(tr_data_cov21, inv(tr_data_cov11)), (x - tr_data_mean1))
+
+# Getting the predictions
+y_pred = []
+for i in range(0, te_data.shape[0]):
+    y_pred.append(fhat_x(te_data[i]))
+y_pred = np.array(y_pred)
+
+if p.shapecheck:
+    assert y_pred.shape == (te_data.shape[0], p.output_dim), "Predicted outputs don't have correct shape"
+
+np.savetxt('predictions.txt', y_pred)
