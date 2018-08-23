@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bookmark}
+
+\newcommand{\vct}[1]{\mathbf{#1}}
+
+\title{Solutions to the Assignment - 4 : CS5560 - \\
+Probabilistic Models in Machine Learning}
+\author{Vishwak Srinivasan\\
+\texttt{CS15BTECH11043}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercises from ML: A Probabilistic Perspective}
+\subsection*{Exercise 4.2}
+\subsubsection*{Part a}
+\begin{flushleft}
+Note that \(P(Y \leq y) = P(WX \leq y)\). Now by total probability, we have:
+\begin{multline}
+P(Y \leq y) = P(WX \leq y) = P(WX \leq y | W = -1)P(W = -1) + P(WX \leq y | W = 1)P(W = 1)\\= P(-X \leq y)P(W = -1) + P(X \leq y)P(W = 1)
+\end{multline}
+
+This means that:
+\begin{equation}
+\Rightarrow P(Y \leq y) = \frac{P(-X \leq y)}{2} + \frac{P(X \leq y)}{2} = P(X \leq y)
+\end{equation}
+The final step was due to the fact that \(X\) is \(\mathcal{N}(0, 1)\), meaning it is symmetric about 0. This in turn means that \(X\) and \(-X\) are distributed in the same manner.
+
+\[P(Y \leq y) = P(X \leq y) \Rightarrow Y \sim \mathcal{N}(0, 1)\]
+\end{flushleft}
+
+\subsubsection*{Part b}
+\begin{flushleft}
+Note that \(\mathbb{E}[X] = \mathbb{E}[Y] = 0\) since \(X, Y \sim \mathcal{N}(0, 1)\). Hence, we need to show that \(\mathbb{E}[XY] = 0\). Note that \(\mathbb{E}[XWX] = \mathbb{E}[X^2W] = \mathbb{E}[\mathbb{E}[X^2W | W]]\). Now:
+\begin{equation}
+\mathbb{E}[\mathbb{E}[X^2W | W]] = \mathbb{E}[X^2] \frac{1}{2} + \mathbb{E}[-X^2] \frac{1}{2} = 0
+\end{equation}
+This shows that \(\mathrm{cov}(X, Y) = 0\).
+\end{flushleft}
+
+\subsection*{Exercise 7.3}
+\begin{flushleft}
+We will first expand the form of \(J(\mathbf{w}, w_{0})\).
+\begin{equation}
+J(\mathbf{w}, w_{0}) = \vct{y}^{T}\vct{y} + w_{0}^{2}\vct{1}^{1} + \vct{w}^{T}\vct{X}^{T}X\vct{w} - 2\vct{y}^{T}\vct{X}\vct{w} - 2w_{0}\vct{y}^{T}\vct{1} + 2w_{0}\vct{w}^{T}\vct{X}^{T}\vct{1} + \lambda \vct{w}^{T}\vct{w}
+\end{equation}
+
+Now take the derivative of \(J\) w.r.t. \(\vct{w}\) and set to \(\vct{0}\).
+\begin{gather}
+\nabla_{\vct{w}} J(\vct{w}, w_{0}) = 2\vct{X}^{T}\vct{X}\vct{w} - 2\vct{X}^{T}\vct{y} + 2\vct{X}^{T}\vct{1} + 2\lambda\mathbb{I}\vct{w} = \vct{0} \\
+\Rightarrow (\lambda \mathbb{I} + \vct{X}^{T}\vct{X})\vct{w} = \vct{X}^{T}\vct{y} - \vct{X}^{T}\vct{1}
+\end{gather}
+
+Note that \(\vct{X}^{T}\vct{1}\) is a column vector with the \(i^{th}\) element equal to the sum of elements of the \(i^{th}\) row of \(\vct{X}^{T}\). The \(i^{th}\) row of \(\vct{X}^{T}\) is the \(i^{th}\) column of \(\vct{X}\). The sum of elements of \(i^{th}\) column of \(\vct{X}\) is the sum of the \(i^{th}\) components of the input vectors. Note that the input is centered, and hence this sum is \(0\) because the mean is \(0\). Due to this:
+\begin{equation}
+\vct{w}^{*} = (\vct{X}^{T}\vct{X} + \lambda \mathbb{I})^{-1} \vct{X}^{T}\vct{y}
+\end{equation}
+
+Similarly, we calculate the derivative of \(J(\vct{w}, w_{0})\) w.r.t. \(w_{0}\).
+\begin{gather}
+\frac{\partial J(\vct{w}, w_{0})}{\partial w_{0}} = 2w_{0}\vct{1}^{T}\vct{1} - 2\vct{y}^{T}\vct{1} + \vct{w}^{T}\vct{X}^{T}\vct{1} = 2w_{0}\vct{1}^{T}\vct{1} - \displaystyle 2\sum_{i=1}^{m}y_{i} = 0\\
+w_{0}^{*} = \frac{\displaystyle 2\sum_{i=1}^{m}y_{i}}{\vct{1}^{T}\vct{1}} = \overline{\vct{y}}
+\end{gather}
+
+The final step is due to the fact that \(\vct{1}^{T}\vct{1} = m\).
+\end{flushleft}
+
+\subsection*{Exercise 7.4}
+\begin{flushleft}
+The conditional log-likelihood in linear regression is:
+\begin{equation}
+\log p(y_{i} | \vct{x}_{i}, \hat{\vct{w}}, \sigma^{2}) = -\frac{1}{2}\log \sigma^{2} - \log 2\pi - \frac{1}{2}\left(\frac{(y_{i} - \hat{\vct{w}}^{T}\vct{x}_{i})^{2}}{\sigma^{2}}\right)
+\end{equation}
+
+Now the conditional log-likelihood over the entire dataset is:
+\begin{equation}
+L(\sigma^{2}) = \log p(\vct{y} | \vct{X}, \hat{\vct{w}}, \sigma^{2}) = -\frac{N}{2}\log\sigma^{2} - N\log 2\pi - \frac{1}{2\sigma^{2}}\sum_{i=1}^{N}(y_{i} - \hat{\vct{w}}^{T}\vct{x}_{i})^{2}
+\end{equation}
+
+Taking the derivative of \(L(\sigma^{2})\) w.r.t. \(\sigma^{2}\) and setting to 0 gives us:
+\begin{gather}
+\frac{\partial L(\sigma^{2})}{\partial \sigma^{2}} = -\frac{N}{2\sigma^{2}} + \frac{1}{2(\sigma^{2})^{2}}\left(\sum_{i=1}^{N}(y_{i} - \hat{\vct{w}}^{T}\vct{x}_{i})^{2}\right) = 0\\
+\Rightarrow \hat{\sigma^{2}} = \frac{1}{N}\sum_{i=1}^{N}(y_{i} - \hat{\vct{w}}^{T}\vct{x}_{i})^{2}
+\end{gather}
+\end{flushleft}
+
+\end{document}

@@ -68,7 +68,7 @@ if p.shapecheck:
     assert tr_data_cov22.shape == (p.output_dim, p.output_dim), "Covariance component 22 shape incorrect"
 
 # Building the function
-fhat_x = lambda x: tr_data_mean2 - np.matmul(np.matmul(tr_data_cov21, inv(tr_data_cov11)), (x - tr_data_mean1))
+fhat_x = lambda x: tr_data_mean2 + np.matmul(np.matmul(tr_data_cov21, inv(tr_data_cov11)), (x - tr_data_mean1))
 
 # Getting the predictions
 y_pred = []
