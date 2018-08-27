@@ -125,40 +125,4 @@ Using the solution in the previous exercise for \(D = 1\), we have:
 w_{0} = \overline{y} - w_{1}\overline{x} 
 \end{equation}
 \end{flushleft}
-
-\section*{Starred Problems}
-\subsection*{Exercise 7.7 from ML: A Probabilistic Perspective}
-\subsubsection*{Part a}
-For computing \(w_{1}\), we require \(C_{xx}^{(n)}\) and \(C_{xy}^{(n)}\).
-
-\subsubsection*{Part b}
-For computing \(w_{0}\), we require \(\overline{x}^{(n)}\) and \(\overline{y}^{(n)}\).
-
-\subsubsection*{Part c}
-\begin{flushleft}
-For the new datapoint, the form of the estimate remains the same:
-\begin{equation}
-\overline{x}^{(n+1)} = \frac{1}{n+1}\sum_{i=1}^{n+1}x_{i} = \frac{n}{n+1}\left(\frac{1}{n}\sum_{i=1}^{n}x_{i}\right) + \frac{1}{n+1}x_{n+1} = \frac{1}{n+1}\left(n\overline{x}^{(n)} + x_{n+1}\right)
-\end{equation}
-
-With some more simplification we have:
-\begin{equation}
-\overline{x}^{(n+1)} = \left(1 - \frac{1}{n+1}\right)\overline{x}^{(n)} + \frac{1}{n+1}x_{n+1} = \overline{x}^{(n)} + \frac{1}{n+1}(x_{n+1} - \overline{x}^{(n)})
-\end{equation}
-
-Analogously, we can derive the expression for \(\overline{y}\), as below:
-\begin{gather}
-\overline{y}^{(n+1)} = \frac{1}{n+1}\sum_{i=1}^{n+1}y_{i} = \frac{n}{n+1}\left(\frac{1}{n}\sum_{i=1}^{n}y_{i}\right) + \frac{1}{n+1}y_{n+1} = \frac{1}{n+1}\left(n\overline{y}^{(n)} + y_{n+1}\right)\\
-\Rightarrow \overline{y}^{(n+1)} = \left(1 - \frac{1}{n+1}\right)\overline{y}^{(n)} + \frac{1}{n+1}y_{n+1} = \overline{y}^{(n)} + \frac{1}{n+1}(y_{n+1} - \overline{y}^{(n)})
-\end{gather}
-\end{flushleft}
-
-\subsubsection*{Part d}
-\begin{flushleft}
-For the new datapoint, the form of the estimate remains the same as before:
-\begin{multline}
-C_{xy}^{(n+1)} = \frac{1}{n+1}\sum_{i=1}^{n+1}(x_{i} - \overline{x}^{(n)})(y_{i} - \overline{y}^{(n)}) = \frac{1}{n+1}\left(\sum_{i=1}^{n}(x_{i} - \overline{x}^{(n)})(y_{i} - \overline{y}^{(n)}) + (x_{n+1} - \overline{x}^{(n)})(y_{n+1} - \overline{y}^{(n)})\right) =\\\frac{1}{n+1}\left(nC_{xy}^{(n)} + x_{n+1}y_{n+1} - \right)
-\end{multline}
-\end{flushleft}
-
 \end{document}
