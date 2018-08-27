@@ -88,4 +88,77 @@ Taking the derivative of \(L(\sigma^{2})\) w.r.t. \(\sigma^{2}\) and setting to 
 \end{gather}
 \end{flushleft}
 
+\subsection*{Exercise 7.5}
+\begin{flushleft}
+We re-trace the steps in Bayesian Linear Regression. We need to minimize the expected KL-divergence between \(P^{*}(y | \vct{x})\) and \(P_{\theta}(y | \vct{x})\). By total expectation rule, this can be converted to an optimization problem as shown below:
+\begin{equation}
+-\max_{\vct{w}, w_{0}} E_{\vct{x}, y \sim P^{*}(\vct{x}, y)} \log p_{\vct{w}, w_0}(y | \vct{x})
+\end{equation}
+
+We will approximate the expectation with a summation over the dataset, and consider a scalar-valued Gaussian (as in the question) with constant variance \(= \sigma^{2}\). Removing terms irrelevant to the optimization problem, we have:
+\begin{equation}
+-\max -\frac{1}{2\sigma^2} \sum_{i=1}^{N} (y_{i} - \vct{w}^{T}\vct{x}_{i} - w_{0})^{2} = \min \frac{1}{2\sigma^2} \sum_{i=1}^{N} \left((y_{i} - \vct{w}^{T}\vct{x}_{i})^{2} + w_{0}^{2} - 2(y_{i} - \vct{w}^{T}\vct{x}_{i})w_{0}\right)
+\end{equation}
+
+Since this is an unconstrained optimization problem, we can directly take the partial derivative / gradients w.r.t. to the parameters to obtain the estimate. First, we take the partial derivative of the objective w.r.t. \(w_{0}\) and set it to 0:
+\begin{equation}
+2Nw_{0} - 2\sum_{i=1}^{N}(y_{i} - \vct{w}^{T}\vct{x}_{i}) = 0 \Rightarrow \hat{w_{0}} = \frac{1}{N}\sum_{i=1}^{N}y_{i} - \frac{1}{N}\sum_{i=1}^{N}\vct{x}_{i}^{T}\vct{w} = \overline{y} - \overline{\vct{x}}^{T}\vct{w}
+\end{equation}
+
+Now take the gradient of \(\vct{w}\) and set it to 0. Before that, we will move some terms around for easier calculation:
+\begin{multline}
+\min \sum_{i=1}^{N} \left((y_{i} - \overline{y}) - (\vct{w}^{T}\vct{x_{i}} -\vct{w}^{T}\overline{\vct{x}})\right)^{2} = \min \sum_{i=1}^{N} (\vct{w}^{T}(\vct{x}_{i} - \overline{\vct{x}}))^{2} - 2\vct{w}\sum_{i=1}^{N} (y_{i} - \overline{y})(\vct{x}_{i} - \overline{\vct{x}}) \\
+\Rightarrow \nabla_{\vct{w}} \text{objective} = 0 \Rightarrow \sum_{i=1}^{N} (\vct{x}_{i} - \overline{\vct{x}})(\vct{x}_{i} - \overline{\vct{x}})^{T}\vct{w} = \sum_{i=1}^{N}(y_{i} - \overline{y})(\vct{x}_{i} - \overline{\vct{x}}) \Rightarrow \vct{X_{c}}^{T}\vct{X_{c}}w = \vct{X_{c}}^{T}\vct{y}_{c}
+\end{multline}
+
+This means that: \(\hat{\vct{w}} = \left(\vct{X_{c}}^{T}\vct{X_{c}}\right)^{-1}\vct{X_{c}}^{T}\vct{y}_{c}\).
+\end{flushleft}
+
+\subsection*{Exercise 7.6}
+\begin{flushleft}
+Using the solution in the previous exercise for \(D = 1\), we have:
+\begin{equation}
+\hat{\vct{w}} = w_{1} = \frac{\sum_{i=1}^{N} (x_{i} - \overline{x})(y_{i} - \overline{y})}{\sum_{i=1}^{N} (x_{i} - \overline{x})^{2}} = \frac{\sum_{i=1}^{N} (x_{i}y_{i}) - \overline{y}\sum_{i=1}^{N}(x_{i} - \overline{x}) - \overline{x}\sum_{i=1}^{N}(y_{i} - \overline{y}) + N\overline{x}\overline{y}}{\sum_{i=1}^{N}(x_{i} - \overline{x})^{2}} = \frac{\sum_{i=1}^{N} x_{i}y_{i} - N\overline{x}\overline{y}}{\sum_{i=1}^{N} (x_{i} - \overline{x})^{2}}
+\end{equation}
+
+\begin{equation}
+w_{0} = \overline{y} - w_{1}\overline{x} 
+\end{equation}
+\end{flushleft}
+
+\section*{Starred Problems}
+\subsection*{Exercise 7.7 from ML: A Probabilistic Perspective}
+\subsubsection*{Part a}
+For computing \(w_{1}\), we require \(C_{xx}^{(n)}\) and \(C_{xy}^{(n)}\).
+
+\subsubsection*{Part b}
+For computing \(w_{0}\), we require \(\overline{x}^{(n)}\) and \(\overline{y}^{(n)}\).
+
+\subsubsection*{Part c}
+\begin{flushleft}
+For the new datapoint, the form of the estimate remains the same:
+\begin{equation}
+\overline{x}^{(n+1)} = \frac{1}{n+1}\sum_{i=1}^{n+1}x_{i} = \frac{n}{n+1}\left(\frac{1}{n}\sum_{i=1}^{n}x_{i}\right) + \frac{1}{n+1}x_{n+1} = \frac{1}{n+1}\left(n\overline{x}^{(n)} + x_{n+1}\right)
+\end{equation}
+
+With some more simplification we have:
+\begin{equation}
+\overline{x}^{(n+1)} = \left(1 - \frac{1}{n+1}\right)\overline{x}^{(n)} + \frac{1}{n+1}x_{n+1} = \overline{x}^{(n)} + \frac{1}{n+1}(x_{n+1} - \overline{x}^{(n)})
+\end{equation}
+
+Analogously, we can derive the expression for \(\overline{y}\), as below:
+\begin{gather}
+\overline{y}^{(n+1)} = \frac{1}{n+1}\sum_{i=1}^{n+1}y_{i} = \frac{n}{n+1}\left(\frac{1}{n}\sum_{i=1}^{n}y_{i}\right) + \frac{1}{n+1}y_{n+1} = \frac{1}{n+1}\left(n\overline{y}^{(n)} + y_{n+1}\right)\\
+\Rightarrow \overline{y}^{(n+1)} = \left(1 - \frac{1}{n+1}\right)\overline{y}^{(n)} + \frac{1}{n+1}y_{n+1} = \overline{y}^{(n)} + \frac{1}{n+1}(y_{n+1} - \overline{y}^{(n)})
+\end{gather}
+\end{flushleft}
+
+\subsubsection*{Part d}
+\begin{flushleft}
+For the new datapoint, the form of the estimate remains the same as before:
+\begin{multline}
+C_{xy}^{(n+1)} = \frac{1}{n+1}\sum_{i=1}^{n+1}(x_{i} - \overline{x}^{(n)})(y_{i} - \overline{y}^{(n)}) = \frac{1}{n+1}\left(\sum_{i=1}^{n}(x_{i} - \overline{x}^{(n)})(y_{i} - \overline{y}^{(n)}) + (x_{n+1} - \overline{x}^{(n)})(y_{n+1} - \overline{y}^{(n)})\right) =\\\frac{1}{n+1}\left(nC_{xy}^{(n)} + x_{n+1}y_{n+1} - \right)
+\end{multline}
+\end{flushleft}
+
 \end{document}
