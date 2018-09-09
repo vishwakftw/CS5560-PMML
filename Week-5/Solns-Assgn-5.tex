@@ -19,9 +19,41 @@ Probabilistic Models in Machine Learning}
 \begin{document}
 \maketitle
 
+\section*{Implementation of Bayes Classifier and Naive-Bayes Classifier}
+\begin{flushleft}
+The accuracies of the Bayes Classifier and the Naive-Bayes Classifier on the dataset were the same and were equal to \(93.4211\%\). Surprisingly, this was also the accuracy of the trained logistic regression classifier using \texttt{LIBLINEAR}. The misclassified examples by the Bayes classifier and Naive-Bayes classifier are reported below:
+\begin{center}
+\begin{tabular}{|p{0.2\linewidth}|p{0.6\linewidth}|}
+\hline
+Bayes & 36, 160, 161, 176, 203, 219, 239, 251, 254, 257, 259, 263, 267, 274, 275, 278, 280, 282, 284, 285, 286, 296, 297, 300, 302, 304, 305, 306, 309, 316, 319, 323, 324, 328, 330, 335, 337, 340, 341, 342, 344, 349, 351, 352, 354, 357, 364, 377, 379, 381, 384, 386, 390, 392, 398, 401, 404, 405, 407, 411, 414, 419, 421, 422, 423, 425, 428, 431, 434, 438, 439, 443, 445, 446, 448, 453, 465, 472, 473, 494, 503, 505, 518, 533, 535, 554, 555, 557, 566, 570, 590, 594, 597, 608, 613, 614, 618, 629, 633, 640, 650, 653, 655, 692, 693, 695, 696, 697, 701, 710, 713, 716, 718, 720, 722, 733, 802, 909, 1111, 1193, 1207, 1373, 1386, 1487, 1495, 1500, 1522, 1549, 1553, 1569, 1612, 1635, 1669, 1673, 1687, 1691, 1701, 1703, 1724, 1732, 1738, 1740, 1762, 1786, 1826, 1836, 1839, 1953, 1963, 1985, 2002, 2046, 2152, 2155, 2209, 2210, 2230, 2250, 2261, 2285, 2292, 2298, 2311, 2340, 2402, 2448, 2513, 2523, 2543, 2554\\
+\hline
+Naive-Bayes & 36, 160, 161, 176, 203, 219, 239, 251, 254, 257, 259, 263, 267, 274, 275, 278, 280, 282, 284, 285, 286, 296, 297, 300, 302, 304, 305, 306, 309, 316, 319, 323, 324, 328, 330, 335, 337, 340, 341, 342, 344, 349, 351, 352, 354, 357, 364, 377, 379, 381, 384, 386, 390, 392, 398, 401, 404, 405, 407, 411, 414, 419, 421, 422, 423, 425, 428, 431, 434, 438, 439, 443, 445, 446, 448, 453, 465, 472, 473, 494, 503, 505, 518, 533, 535, 554, 555, 557, 566, 570, 590, 594, 597, 608, 613, 614, 618, 629, 633, 640, 650, 653, 655, 692, 693, 695, 696, 697, 701, 710, 713, 716, 718, 720, 722, 733, 802, 909, 1111, 1193, 1207, 1373, 1386, 1487, 1495, 1500, 1522, 1549, 1553, 1569, 1612, 1635, 1669, 1673, 1687, 1691, 1701, 1703, 1724, 1732, 1738, 1740, 1762, 1786, 1826, 1836, 1839, 1953, 1963, 1985, 2002, 2046, 2152, 2155, 2209, 2210, 2230, 2250, 2261, 2285, 2292, 2298, 2311, 2340, 2402, 2448, 2513, 2523, 2543, 2554\\
+\hline
+\end{tabular}
+\end{center}
+\end{flushleft}
+
 \section*{Exercises from ML: A Probabilistic Perspective}
 \subsection*{Exercise 4.19}
 \begin{flushleft}
+There are no assumptions considered on the parameters \(\pi_{0}, \pi_{1}\), \(\mu_{0}, \mu_{1}\) and \(\Sigma_{0}, \Sigma_{1}\) except for the fact that \(\Sigma_{1} = k\Sigma_{0}\) and \(\pi_{0} = 1 - \pi_{1}\).
+
+Note that:
+\begin{gather}
+(\vct{x} - \mu_{1})^{T}\Sigma_{1}^{-1}(\vct{x} - \mu_{1}) = \frac{1}{k}(\vct{x} - \mu_{1})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{1})\\
+|2\pi \Sigma_{1}|^{-0.5} = k^{-\frac{n}{2}} |2\pi \Sigma_{0}|
+\end{gather}
+
+This means that:
+\begin{multline}
+p(y = 1 | \vct{x}; \theta) = \frac{\pi_{1}|2\pi \Sigma_{1}|^{-0.5} \exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{1}^{-1}(\vct{x} - \mu_{1})\right)}{\pi_{1}|2\pi \Sigma_{1}|^{-0.5} \exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{1}^{-1}(\vct{x} - \mu_{1})\right) + \pi_{0}|2\pi \Sigma_{0}|^{-0.5} \exp(\frac{-1}{2}\left((\vct{x} - \mu_{0})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{0})\right)}\\= \frac{\pi_{1}k^{-\frac{n}{2}} \left(\exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{1})\right)\right)^{\frac{1}{k}}}{\pi_{1}k^{-\frac{n}{2}} \left(\exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{1})\right)\right)^{\frac{1}{k}} + (1 - \pi_{1}) \exp(\frac{-1}{2}\left((\vct{x} - \mu_{0})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{0})\right)}
+\end{multline}
+
+A special case arises if \(\mu_{1} = \mu_{0}\):
+\begin{equation}
+p(y = 1 | \vct{x} ; \theta) = \frac{\pi_{1} k^{-\frac{n}{2}}}{\pi_{1} k^{-\frac{n}{2}} + (1 - \pi_{1}) (f^{\frac{k - 1}{k}}_{\mu_{0}, \Sigma_{0}}(\vct{x}))}
+\end{equation}
+where \(f_{\mu_{0}, \Sigma_{0}}(\vct{x}) = \exp(\frac{-1}{2}(\vct{x} - \mu_{0})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{0}))\)
 \end{flushleft}
 
 \subsection*{Exercise 4.21}
@@ -150,22 +182,22 @@ First we prove that \(f(\vct{w}) = -\log \sigma(y \vct{x}^{T} \vct{w})\) is conv
 
 Consider \(\vct{z}\) such that \(\vct{z} \neq 0\). Now we know that the matrix formed with the \((ij)^{th}\) entry as \(\frac{d^{2}f}{dw_{i}dw_{j}}\) is the Hessian (denoted by \(\vct{H}\)). To prove that this function is convex, we have to show that \(\vct{z}^{T}\vct{H}\vct{z} \geq 0\) or \(\displaystyle\sum_{i, j = 1} z_{i}z_{j}H_{ij} \geq 0\). We will use the second approach.
 \begin{multline}
-\sum_{i}\sum_{j} z_{i}z_{j}y^{2}x_{i}x_{j}\sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w})) = y^{2}\sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w}))\left(\sum_{i}z_{i}x_{i}\right)\left(\sum_{j}z_{j}x_{j}\right)\\= \sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w})) \left(\sum_{i} z_{i}x_{i}\right)^{2} \geq 0
+\sum_{i}\sum_{j} z_{i}z_{j}y^{2}x_{i}x_{j}\sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w})) = y^{2}\sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w}))\left(\sum_{i}z_{i}x_{i}\right)\left(\sum_{j}z_{j}x_{j}\right)\\= \sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w})) \left(\sum_{i} z_{i}x_{i}\right)^{2} > 0
 \end{multline}
 
 The final step is due to:
 \begin{enumerate}
 \item \(y^{2} = 1\) for \(y = \{+1, -1\}\)
 \item \(\sigma(y \vct{x}^{T}\vct{w}) \in (0, 1) \Rightarrow 1 - \sigma(y \vct{x}^{T}\vct{w}) \in (0, 1) \Rightarrow \sigma(y \vct{x}^{T}\vct{w})(1 - \sigma(y \vct{x}^{T}\vct{w})) > 0\)
-\item \(\displaystyle\sum_{i}\sum_{j} a_{i}a_{j} = \sum_{i}a_{i}\sum_{j}a_{j} = \left(\sum_{i}a_{i}\right)\left(\sum_{i}a_{i}\right) = \left(\sum_{i}a_{i}\right)^{2} \geq 0\)
+\item \(\displaystyle\sum_{i}\sum_{j} a_{i}a_{j} = \sum_{i}a_{i}\sum_{j}a_{j} = \left(\sum_{i}a_{i}\right)\left(\sum_{i}a_{i}\right) = \left(\sum_{i}a_{i}\right)^{2} > 0\) for non-zero \(\vct{a}\).
 \end{enumerate}
 
-Next the sum of two convex functions are convex. Define \(h(x) = f(x) + g(x)\) where \(f\) and \(g\) are convex. Using Jensen's inequality, for \(\lambda \in [0, 1]\):
+Next the sum of two strictly convex functions are convex. Define \(h(x) = f(x) + g(x)\) where \(f\) and \(g\) are strictly convex. Using Jensen's inequality, for \(\lambda \in [0, 1]\):
 \begin{multline}
-h(\lambda x_{1} + (1 - \lambda)x_{2}) = f(\lambda x_{1} + (1 - \lambda)x_{2}) + g(\lambda x_{1} + (1 - \lambda)x_{2})\\\leq \lambda f(x_{1}) + (1 - \lambda)f(x_{2}) + g(x_{1}) + (1 - \lambda)g(x_{2})\\= \lambda(f(x_{1}) + g(x_{1})) + (1 - \lambda)(f(x_{2}) + g(x_{2}))=\lambda h(x_{1}) + (1 - \lambda)h(x_{2})
+h(\lambda x_{1} + (1 - \lambda)x_{2}) = f(\lambda x_{1} + (1 - \lambda)x_{2}) + g(\lambda x_{1} + (1 - \lambda)x_{2})\\< \lambda f(x_{1}) + (1 - \lambda)f(x_{2}) + g(x_{1}) + (1 - \lambda)g(x_{2})\\= \lambda(f(x_{1}) + g(x_{1})) + (1 - \lambda)(f(x_{2}) + g(x_{2}))=\lambda h(x_{1}) + (1 - \lambda)h(x_{2})
 \end{multline}
 
-This can be generalized for as many functions as we want via induction, which means that \(\displaystyle\sum_{i \in \mathcal{D}} -\log \sigma(y_{i}\vct{x}_{i}^{T}\vct{w})\) is convex as well. Scaling by a positive constant doesn't affect convexity, hence \(\displaystyle\frac{1}{|\mathcal{D}|}\sum_{i \in \mathcal{D}} -\log \sigma(y_{i}\vct{x}_{i}^{T}\vct{w})\) is convex as well. Trivially, for \(\lambda > 0\), \(\lambda ||\vct{w}||_{2}^{2}\) is convex, meaning that \(J(\vct{w})\) is convex. Therefore, \(J(\vct{w})\) cannot have multiple optimal solutions. The statement is \textbf{false}.
+This can be generalized for as many functions as we want via induction, which means that \(\displaystyle\sum_{i \in \mathcal{D}} -\log \sigma(y_{i}\vct{x}_{i}^{T}\vct{w})\) is strictly convex as well. Scaling by a positive constant doesn't affect strict convexity, hence \(\displaystyle\frac{1}{|\mathcal{D}|}\sum_{i \in \mathcal{D}} -\log \sigma(y_{i}\vct{x}_{i}^{T}\vct{w})\) is strictly convex as well. Trivially, for \(\lambda > 0\), \(\lambda ||\vct{w}||_{2}^{2}\) is convex, meaning that \(J(\vct{w})\) is strictly convex. Therefore, \(J(\vct{w})\) cannot have multiple optimal solutions. The statement is \textbf{false}.
 \end{flushleft}
 
 \subsubsection*{Part b}
@@ -214,7 +246,7 @@ The boundary is basically the line \(w_{0} + w_{1}x_{1} + w_{2}x_{2} = 0\). Sinc
 \end{minipage}
 \hfill
 \begin{minipage}{0.475\linewidth}
-The slope of the line \(w_{0} + w_{1}x_{1} + w_{2}x_{2} = 0\) is \(-\frac{w_{1}}{w_{2}}\). Since there is control over the parameter \(w_{1}\), the slope will also be controlled, and possibly close to \(0\) too. There will be one classification error.
+The slope of the line \(w_{0} + w_{1}x_{1} + w_{2}x_{2} = 0\) is \(-\frac{w_{1}}{w_{2}}\). Since there is control over the parameter \(w_{1}\), the slope will also be controlled, and possibly close to \(0\) too. There will be two classification errors.
 \end{minipage}
 
 \subsubsection*{Part d}

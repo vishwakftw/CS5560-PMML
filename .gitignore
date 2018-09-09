@@ -6,3 +6,10 @@
 
 # liblinear files
 liblinear*
+
+# python files
+*.pyc
+__pycache__/
+
+# dataset files
+data/
