@@ -1,0 +1,100 @@
+\documentclass{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bookmark}
+\usepackage{graphicx}
+\usepackage{float}
+
+\newcommand{\vct}[1]{\mathbf{#1}}
+\newcommand{\argmax}{\mathop{\mathrm{argmax}}}
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+
+\title{Solutions to the Assignment - 5 : CS5560 - \\
+Probabilistic Models in Machine Learning}
+\author{Vishwak Srinivasan\\
+\texttt{CS15BTECH11043}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercises from ML: A Probabilistic Perspective}
+\subsection*{Exercise 3.2}
+\begin{flushleft}
+Note that for any \(n, m > 0\):
+\begin{equation}
+n \cdot (n + 1) \cdot (n + 2) \cdots (n + m) = \frac{1 \cdot 2 \cdots (n - 1) \cdot n \cdot (n + 1) \cdot (n + 2) \cdot (n + m)}{1 \cdot 2 \cdots (n - 1)} = \frac{(n + m)!}{(n - 1)!}
+\end{equation}
+
+From the above equation, in our case, we can simplify the following to:
+\begin{itemize}
+\item \(\alpha_{1} \cdot (\alpha_{1} + 1) \cdots (\alpha_{1} + N_{1} - 1) = \frac{(\alpha_{1} + N_{1} - 1)}{(\alpha_{1} - 1)}\)
+\item \(\alpha_{0} \cdot (\alpha_{0} + 1) \cdots (\alpha_{0} + N_{0} - 1) = \frac{(\alpha_{0} + N_{0} - 1)}{(\alpha_{0} - 1)}\)
+\item \(\alpha \cdot (\alpha + 1) \cdots (\alpha + N - 1) = \frac{(\alpha + N - 1)}{(\alpha - 1)}\)
+\end{itemize}
+
+Based on these equations:
+\begin{equation}
+\label{raw-32}
+\frac{[\alpha_{1} \cdot (\alpha_{1} + 1) \cdots (\alpha_{1} + N_{1} - 1)][\alpha_{0} \cdot (\alpha_{0} + 1) \cdots (\alpha_{0} + N_{0} - 1)]}{\alpha \cdot (\alpha + 1) \cdots (\alpha + N - 1)} = \frac{(\alpha_{1} + N_{1} - 1)}{(\alpha_{1} - 1)} \times \frac{(\alpha_{0} + N_{0} - 1)}{(\alpha_{0} - 1)} \times \frac{(\alpha - 1)}{(\alpha + N - 1)}
+\end{equation}
+
+From the fact that \(\Gamma(z) = (z - 1)!\) and \(\alpha_{1} + \alpha_{0} = \alpha\), Eqn \ref{raw-32} simplifies to
+\[\displaystyle \frac{\Gamma(\alpha_{1} + N_{1}) \Gamma(\alpha_{0} + N_{0}) \Gamma(\alpha_{0} + \alpha_{1})}{\Gamma(\alpha_{0} + \alpha_{1} + N) \Gamma(\alpha_{1}) \Gamma(\alpha_{0})}\]
+\end{flushleft}
+
+\subsection*{Exercise 3.4}
+\begin{flushleft}
+\begin{equation*}
+p(\theta | X < 3) \propto p(\theta) p(X < 3 | \theta) \hfill \text{(From Bayes' Rule)}
+\end{equation*}
+
+Without loss of generality, assume that \(p(\theta) \sim \mathrm{Beta}(\alpha, \beta) \propto \theta^{\alpha - 1} (1 - \theta)^{\beta - 1}\). Now note that:
+\begin{equation}
+p(X < 3 | \theta) = p(X = 0 | \theta) + p(X = 1 | \theta) + p(X = 2 | \theta) = (1 - \theta)^{5} + 5\theta(1 - \theta)^{4} + 10\theta^{2}(1 - \theta)^{3}
+\end{equation}
+
+Substuting this in the preliminary equation:
+\begin{equation}
+p(\theta | X < 3) \propto \theta^{\alpha - 1}(1 - \theta)^{(5 + \beta) - 1} + 5\theta^{(\alpha + 1) - 1}(1 - \theta)^{(4 + \beta) - 1} + 10\theta^{(\alpha + 2) - 1}(1 - \theta)^{(3 + \beta) - 1} \sim \text{Mixture of three Beta distributions}
+\end{equation}
+The three Beta distributions are (after substituting \(\alpha = 1, \beta = 1\) from the question):
+\begin{itemize}
+\item Beta\((1, 6)\) \item Beta\((2, 5)\) \item Beta\((3, 4)\)
+\end{itemize}
+Finally:
+\[p(\theta | X < 3) \sim \text{Beta}(1, 6) + 5\text{Beta}(2, 5) + 10\text{Beta}(3, 4)\]
+\end{flushleft}
+
+\subsection*{Exercise 3.7}
+\subsubsection*{Part a}
+\begin{flushleft}
+The \textit{pdf} of a Poisson distribution is given by:
+\[p(x | \lambda) = \frac{\lambda^{x}\exp(-\lambda)}{x!}\]
+
+Now with a slight abuse of notation, we can write:
+\begin{equation}
+p(\mathcal{D} | \lambda) = \frac{\displaystyle\prod_{i=1}^{m}\lambda^{x_{i}}e^{-\lambda}}{\displaystyle\prod_{i=1}^{m}x_{i}!} = \frac{\lambda^{\displaystyle \sum_{i=1}^{m}x_{i}}\exp(-m\lambda)}{\displaystyle\prod_{i=1}^{m}x_{i}!}
+\end{equation}
+
+For ease, consider \(\displaystyle \sum_{i=1}^{m} x_{i} = S\) and \(\displaystyle \prod_{i=1}^{m} x_{i}! = PF\).
+Now we can proceed to compute \(p(\lambda | \mathcal{D})\), using the fact that \(p(\lambda) \propto \lambda^{a - 1}\exp(-b\lambda)\)
+\begin{equation}
+p(\lambda | \mathcal{D}) \propto p(\lambda) p(\mathcal{D} | \lambda) = \lambda^{a - 1} \lambda^{S} \exp(-b\lambda) \exp(-m\lambda) = \lambda^{(a + S) - 1} \exp(-(b + m)\lambda) \propto \text{Gamma}(a + S, b + m)
+\end{equation}
+
+The normalization constant can be easily obtained via the normalization constant of the Gamma distribution itself. The normalization constant of the Gamma distribution is given by: \(\frac{\beta^{\alpha}}{\Gamma(\alpha)}\). Therefore the complete posterior can be written as:
+\begin{equation}
+p(\lambda | \mathcal{D}) = \frac{(b + m)^{(a + S)}}{\Gamma(a + S)}\lambda^{a + S - 1}\exp(-(b + m)\lambda)
+\end{equation}
+\end{flushleft}
+
+\subsubsection*{Part b}
+\begin{flushleft}
+The posterior mean is given by:
+\begin{equation}
+\mu(a, b) = \frac{(a + S)}{(b + m)} \Rightarrow \lim_{a, b \to 0} \mu(a, b) = \frac{S}{m} = \frac{1}{m}\displaystyle\sum_{i=1}^{m}x_{i}
+\end{equation}
+\end{flushleft}
+\end{document}
