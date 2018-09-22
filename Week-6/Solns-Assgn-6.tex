@@ -97,4 +97,77 @@ The posterior mean is given by:
 \mu(a, b) = \frac{(a + S)}{(b + m)} \Rightarrow \lim_{a, b \to 0} \mu(a, b) = \frac{S}{m} = \frac{1}{m}\displaystyle\sum_{i=1}^{m}x_{i}
 \end{equation}
 \end{flushleft}
+
+\subsection*{Exercise 3.11}
+\subsubsection*{Part a}
+\begin{flushleft}
+We consider the log-likelihood for the \(i^{th}\) sample, and collectively the log-likelihood of the dataset:
+\begin{gather}
+\log p_{\theta}(x_{i}) = \log \theta - \theta x_{i} \\
+g(\theta) = \log p_{\theta}(\mathcal{D}) = \displaystyle \sum_{i=1}^{m} \log p_{\theta}(x_{i}) = m\log\theta - \theta \sum_{i=1}^{m} x_{i}
+\end{gather}
+
+Note that the domain is open again. Taking the derivative of \(g(\theta)\) w.r.t. \(\theta\) and setting to 0 gives us:
+\begin{equation}
+g'(\theta) = \frac{m}{\theta} - \sum_{i=1}^{m} x_{i} = 0 \Rightarrow \hat{\theta} = \frac{m}{\displaystyle \sum_{i=1}^{m} x_{i}}.
+\end{equation}
+
+Since the samples are positive, this is a valid estimate.
+\end{flushleft}
+
+\subsubsection*{Part b}
+\begin{flushleft}
+Now, we can substitute the observed values into the expression for the MLE, giving us:
+\begin{equation}
+\hat{\theta} = \frac{3}{5 + 6 + 4} = \frac{1}{5}
+\end{equation}
+\end{flushleft}
+
+\subsubsection*{Part c}
+\begin{flushleft}
+Note that \(p(\theta) \propto \exp(-\theta \lambda) = \theta^{1 - 1}\exp(-\theta \lambda) \propto \text{Gamma}(1 , \lambda)\). Due to this, the mean of \(p(\theta) = \frac{1}{\lambda}\) (Since the mean of Gamma\((a, b) = \frac{a}{b}\)). In our case, \(\frac{1}{\hat{\lambda}} = \frac{1}{3} \Rightarrow \hat{\lambda} = 3\).
+\end{flushleft}
+
+\subsubsection*{Part d}
+\begin{flushleft}
+\begin{equation*}
+p(\theta | \mathcal{D}) \propto p(\theta) p(\mathcal{D} | \theta) \propto \hat{\lambda}e^{-\theta \hat{\lambda}} \theta^{m} \exp(-\theta \sum_{i=1}^{m}x_{i}) \propto \theta^{(m + 1) - 1} \exp(-\theta\left(\hat{\lambda} + \sum_{i=1}^{m}x_{i}\right)) = \text{Gamma}(m + 1, \hat{\lambda} + \sum_{i=1}^{m}x_{i})
+\end{equation*}
+
+Using the normalization constant of the Gamma distribution, we can write the exact form of the posterior distribution:
+\begin{equation}
+p(\theta | \mathcal{D}) = \frac{\displaystyle \left(3 + \sum_{i=1}^{m}x_{i}\right)^{m + 1}}{\Gamma(m + 1)} \theta^{(m + 1) - 1} \exp(-\theta\left(3 + \sum_{i=1}^{m}x_{i}\right))
+\end{equation}
+\end{flushleft}
+
+\subsubsection*{Part e}
+Yes, because of the fact that all of them are a case of the Gamma distribution.
+
+\subsubsection*{Part f}
+Posterior mean is \(\displaystyle \frac{m + 1}{3 + \sum_{i=1}^{m}x_{i}}\).
+
+\subsubsection*{Part g}
+The MLE mean is the inverse of the mean of observations, whereas here it is a corrected form of the mean. This correction is due to the prior form of the parameters assumed. As the number of samples increase, this mean would tend to the actual mean as computed via MLE, but is conservative for smaller number of examples.
+
+\subsection*{Exercise 3.15}
+\begin{flushleft}
+\[\frac{\alpha}{\alpha + \beta} = m \Rightarrow \frac{\alpha}{m} = \alpha + \beta \text{ and } \beta = \frac{\alpha(1 - m)}{m}\]
+
+Now, in the variance equation:
+\begin{equation}
+\frac{\alpha \beta}{(\alpha + \beta)^{2} (\alpha + \beta + 1)} = \frac{m^3 \alpha \beta}{\alpha^{2} (\alpha + m)} = \frac{m^3 \beta}{\alpha (\alpha + m)} = \frac{m^3 (1 - m)}{m(\alpha + m)} = v
+\end{equation}
+
+From the final equation, we can see that:
+\begin{equation}
+\alpha = \frac{m^{2}(1 - m) - vm}{v}
+\end{equation}
+
+and hence,
+\begin{equation}
+\beta = \frac{m(1 - m)^{2} - v(1 - m)}{v}
+\end{equation}
+
+If \(m = 0.7, v = 0.04\), we get: \(\alpha = \frac{11.9}{4}, \beta = \frac{5.1}{4}\)
+\end{flushleft}
 \end{document}
