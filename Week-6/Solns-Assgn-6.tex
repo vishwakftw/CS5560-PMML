@@ -98,6 +98,31 @@ The posterior mean is given by:
 \end{equation}
 \end{flushleft}
 
+\subsection*{Exercise 3.10}
+\begin{flushleft}
+We require the solution of Exercise 3.9 for this problem. Thus, we find the posterior distribution:
+\begin{equation}
+p(\theta | \mathcal{D}) = \frac{p(\mathcal{D, \theta})}{p(\mathcal{D})} =
+\begin{cases}
+\frac{\frac{Kb^{K}}{\theta^{N + K + 1}}\mathbf{1}_{\theta \geq \max{D}}}{\frac{K}{(N + K)b^{N}}} = \frac{(N + K)b^{N+K}}{\theta^{N + K + 1}}& m \leq b\\
+\frac{\frac{Kb^{K}}{\theta^{N + K + 1}}\mathbf{1}_{\theta \geq \max{D}}}{\frac{Kb^{K}}{(N + K)m^{N + K}}} = \frac{(N + K)m^{N + K}}{\theta^{N + K + 1}} & m > b
+\end{cases} = \frac{(N + K)\max(m, b)^{N + K}}{\theta^{N + K + 1}}\mathbf{1}_{\theta \geq \max{D}}
+\end{equation}
+\end{flushleft}
+
+\subsubsection*{Part a}
+\begin{flushleft}
+In our case, \(b, K = 0\) and \(m = 100\), \(N = 1\). Hence the posterior is given by:
+\begin{equation}
+p(\theta | \mathcal{D}) = \frac{1\cdot(100)^{1}}{\theta^{(1 + 1)}} = Pa(1, 100)
+\end{equation}
+\end{flushleft}
+
+\subsubsection*{Part b}
+\begin{flushleft}
+The mean of the Pareto distribution is given by \(\frac{kB}{k - 1}\). The posterior derived has \(k = 1\), hence mean doesn't exist. The median however, can be given by \(B\sqrt[k]{2} = 100 \cdot 2 = 200\) and the mode is given by \(B = 100\).
+\end{flushleft}
+
 \subsection*{Exercise 3.11}
 \subsubsection*{Part a}
 \begin{flushleft}
@@ -169,5 +194,72 @@ and hence,
 \end{equation}
 
 If \(m = 0.7, v = 0.04\), we get: \(\alpha = \frac{11.9}{4}, \beta = \frac{5.1}{4}\)
+\end{flushleft}
+
+\subsection*{Exercise 4.14}
+\subsubsection*{Part a}
+\begin{flushleft}
+We know that:
+\begin{gather}
+p(\mu | \mathcal{D}) \propto p(\mathcal{D} | \mu) p(\mu | m, s^{2}) \Rightarrow \log p(\mu | \mathcal{D}) \propto \log p(\mathcal{D} | \mu) + \log p(\mu | m, s^{2})\\
+\log p(x_{i} | \mu) = -\frac{(x_{i} - \mu)^{2}}{2\sigma^{2}} - \log(\sqrt{2 \pi \sigma^{2}}) \Rightarrow \log p(\mathcal{D} | \mu) = \displaystyle -\sum_{i=1}^{n} \frac{(x_{i} - \mu)^{2}}{2\sigma^{2}} - n\log(\sqrt{2\pi\sigma^{2}})\\
+\log p(\mu | m, s^{2}) = -\frac{(\mu - m)^2}{2s^2} - \log(\sqrt{2\pi s^{2}})
+\end{gather}
+
+Assembling these facts appropriately we get:
+\begin{equation}
+\log p(\mu | \mathcal{D}) \propto -\frac{1}{2\sigma^{2}} \sum_{i=1}^{n} (x_{i} - \mu)^{2} - n\log(\sqrt{2\pi\sigma^{2}}) - \frac{1}{2s^{2}} (\mu - m)^{2} - \log(\sqrt{2\pi s^{2}})
+\end{equation}
+
+The proportionality constant would be \(p(\mathcal{D})\) and is independent of \(\mu\), hence we can minimize the RHS of the proportional to obtain the MAP estimate:
+\begin{equation}
+\hat{\mu}^{MAP} = \argmax_{\mu \in \mathbb{R}} \underbrace{-\frac{1}{2\sigma^{2}} \sum_{i=1}^{n} (x_{i} - \mu)^{2} - \frac{1}{2s^{2}} (\mu - m)^{2}}_{f(\mu)} \text{(\hfill Excluding terms not involving \(\mu\))}
+\end{equation}
+
+Take the derivative of \(f(\mu)\) and set to 0.
+\begin{equation}
+\label{map-estimate-414}
+\frac{\partial f(\mu)}{\partial \mu} = \frac{1}{\sigma^2}\sum_{i=1}^{n}x_{i} - \frac{n\mu}{\sigma^{2}} - \frac{\mu}{s^2} + \frac{m}{s^2} = 0 \Rightarrow \hat{\mu}^{MAP} = \frac{\displaystyle \frac{1}{\sigma^{2}} \sum_{i=1}^{n} x_{i} + \frac{m}{s^2}}{\displaystyle \frac{n}{\sigma^{2}} + \frac{1}{s^2}}
+\end{equation}
+\end{flushleft}
+
+\subsubsection*{Part b}
+\begin{flushleft}
+An alternative way to write the MAP estimate would be:
+\begin{equation}
+\hat{\mu}^{MAP} = \frac{\frac{1}{\sigma^2} \hat{\mu}^{MLE} + \frac{m}{s^2n}}{\frac{1}{\sigma^2} + \frac{1}{s^2n}}
+\end{equation}
+
+This can be obtained by dividing the numerator and denominator by \(n\) and \(\hat{\mu}^{MLE} = \frac{1}{n}\displaystyle\sum_{i=1}^{n}x_{i}\). We require this:
+\begin{equation}
+\lim_{n\to\infty} \hat{\mu}^{MAP} = \lim_{n\to\infty} \frac{\frac{1}{\sigma^2} \hat{\mu}^{MLE} + \frac{m}{s^2n}}{\frac{1}{\sigma^2} + \frac{1}{s^2n}} = \frac{\frac{\hat{\mu}^{MLE}}{\sigma^{2}}}{\frac{1}{\sigma^{2}}} = \hat{\mu}^{MLE}
+\end{equation}
+
+Hence as the number of examples increases, the MAP estimate converges to the MLE.
+\end{flushleft}
+
+\subsubsection*{Part c}
+\begin{flushleft}
+Using the original form of the MAP estimate in Eqn \ref{map-estimate-414}, we need to evaluate the limit as \(s^{2}\) tends to \(\infty\).
+\begin{equation}
+\lim_{s^{2}\to\infty} \hat{\mu}^{MAP} = \lim_{s^{2} \to \infty} \frac{\displaystyle \frac{1}{\sigma^{2}} \sum_{i=1}^{n} x_{i} + \frac{m}{s^2}}{\displaystyle \frac{n}{\sigma^{2}} + \frac{1}{s^2}} = \frac{\frac{1}{\sigma^2} \displaystyle \sum_{i=1}^{n}x_{i}}{\frac{n}{\sigma^{2}}} = \hat{\mu}^{MLE}
+\end{equation}
+
+Hence as \(s^{2}\) increases, the MAP estimate converges to the MLE.
+\end{flushleft}
+
+\subsubsection*{Part d}
+\begin{flushleft}
+The MAP estimate can also be written in another way:
+\begin{equation}
+\hat{\mu}^{MAP} = \frac{s^2\hat{\mu}^{MLE} + \frac{m\sigma^{2}}{n}}{s^{2} + \frac{\sigma^{2}}{n}}
+\end{equation}
+
+This can be obtained by multiplying \(\sigma^{2} s^2\) to the numerator and denominator. We require the limit as \(s^{2}\) tends to \(0\).
+\begin{equation}
+\lim_{s^{2}\to 0} \hat{\mu}^{MAP} = \lim_{s^{2}\to 0} \frac{s^2\hat{\mu}^{MLE} + \frac{m\sigma^{2}}{n}}{s^{2} + \frac{\sigma^{2}}{n}} = \frac{\frac{m\sigma^{2}}{n}}{\frac{\sigma^{2}}{n}} = m
+\end{equation}
+
+Hence as \(s^{2}\) decreases, the MAP estimate converges to the mean of the prior.
 \end{flushleft}
 \end{document}
