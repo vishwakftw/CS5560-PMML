@@ -10,7 +10,7 @@
 \newcommand{\argmax}{\mathop{\mathrm{argmax}}}
 \newcommand{\argmin}{\mathop{\mathrm{argmin}}}
 
-\title{Solutions to the Assignment - 5 : CS5560 - \\
+\title{Solutions to the Assignment - 6 : CS5560 - \\
 Probabilistic Models in Machine Learning}
 \author{Vishwak Srinivasan\\
 \texttt{CS15BTECH11043}}
@@ -290,5 +290,39 @@ This can be obtained by multiplying \(\sigma^{2} s^2\) to the numerator and deno
 \end{equation}
 
 Hence as \(s^{2}\) decreases, the MAP estimate converges to the mean of the prior.
+\end{flushleft}
+
+\section*{Starred Problems}
+\subsection*{Problem 1: 4.11 from ML: A Probabilistic Perspective}
+\begin{flushleft}
+We know that the likelihood is given by:
+\begin{multline}
+p(\mathcal{D} | \vct{\mu}, \Sigma) = (2\pi)^{-\frac{ND}{2}} |\Sigma|^{-\frac{N}{2}} \exp\left(-\frac{1}{2}\sum_{i=1}^{N}(\vct{x}_{i} - \vct{\mu})^{T}\Sigma^{-1}(\vct{x}_{i} - \vct{\mu})\right)\\= (2\pi)^{-\frac{ND}{2}} |\Sigma|^{-\frac{N}{2}} \exp\left(-\frac{1}{2}tr(\Sigma^{-1}S_{\bar{x}}) + N(\vct{\bar{x}} - \vct{\mu})^{T}\Sigma^{-1}(\vct{\bar{x}} - \vct{\mu})\right)
+\end{multline}
+The last equation comes from Eqn 4.195 in the text. Combining this with the prior, we have the posterior given by:
+\begin{gather}
+p(\vct{\mu}, \Sigma | \mathcal{D}) \propto |\Sigma|^{-\frac{1}{2}(\nu_{0} + N + D + 2)} \exp\left(-\frac{1}{2}\left(\underbrace{\sum_{i=1}^{N}(\vct{\bar{x}} - \vct{\mu})^{T}\Sigma^{-1}(\vct{\bar{x}} - \vct{\mu}) + \sum_{i=1}^{\kappa_{0}}(m_{0} - \vct{\mu})^{T}\Sigma^{-1}(m_{0} - \vct{\mu})}_{\text{This is a combination of two types of terms, with \(N\) and \(\kappa_{0}\) values}} + tr(\Sigma^{-1}(S_{\bar{x}} + S_0))\right)\right)\\
+p(\vct{\mu}, \Sigma | \mathcal{D}) \propto |\Sigma|^{-\frac{1}{2}(\nu_{0} + N + D + 2)} \exp\left(-\frac{1}{2}\left((N + \kappa_{0})(m_{N} - \mu)^{T}\Sigma^{-1}(m_{N} - \mu) + tr(\Sigma^{-1}(S_{\bar{x}} + S_{0} + S_{m_{N}}))\right)\right)
+\end{gather}
+
+The above equation is again due to the identity in 4.195, and the similarity between the two equations. \(m_{N} = \text{Average of } N \vct{\bar{x}}\text{ s and } \kappa_{0}m_{0}\text{ s} = \frac{N\vct{\bar{x}} + \kappa_{0}m_{0}}{N + \kappa_{0}}\).
+
+To ensure proper cancellation of terms however, one must check that:
+\begin{equation}
+S_{m_{N}} = N(\vct{\bar{x}} - m_{N})(\vct{\bar{x}} - m_{N})^{T} + \kappa_{0}(m_{0} - m_{N})(m_{0} - m_{N})^{T} = \frac{N\kappa_{0}}{N + \kappa_{0}}(\vct{\bar{x}} - m_{0})(\vct{\bar{x}} - m_{0})^{T}
+\end{equation}
+
+Now we can assemble and compare the terms with NIW to get the parameters of the posterior NIW:
+\begin{equation}
+p(\vct{\mu}, \Sigma | \mathcal{D}) \propto |\Sigma|^{-\frac{1}{2}(\nu_{0} + N + D + 2)} \exp\left(-\frac{(N + \kappa_{0})}{2}\left((\mu - m_{N})^{T}\Sigma^{-1}(\mu - m_{N}) + tr(\Sigma^{-1}(S_{\bar{x}} + S_{0} + S_{m_{N}}))\right)\right)
+\end{equation}
+
+The parameters are:
+\begin{itemize}
+\item \(\nu_{0} + N = \nu_{N}\)
+\item \(N + \kappa_{0} = \kappa_{N}\)
+\item \(S_{\bar{x}} + S_{0} + S_{m_{N}} = S_{N}\)
+\item \(\frac{N\vct{\bar{x}} + \kappa_{0}m_{0}}{N + \kappa_{0}} = m_{N}\)
+\end{itemize}
 \end{flushleft}
 \end{document}
