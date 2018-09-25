@@ -123,6 +123,35 @@ p(\theta | \mathcal{D}) = \frac{1\cdot(100)^{1}}{\theta^{(1 + 1)}} = Pa(1, 100)
 The mean of the Pareto distribution is given by \(\frac{kB}{k - 1}\). The posterior derived has \(k = 1\), hence mean doesn't exist. The median however, can be given by \(B\sqrt[k]{2} = 100 \cdot 2 = 200\) and the mode is given by \(B = 100\).
 \end{flushleft}
 
+\subsubsection*{Part c}
+\begin{flushleft}
+From the equation given in the question and the posterior derived for the parameters, we can write the predictive probability as:
+\begin{equation}
+\label{pred-prob-310}
+p(x | D, \alpha) =
+\begin{cases}
+\displaystyle \int_{x}^{\infty} \frac{1}{\theta} \frac{m}{\theta^{2}} d\theta & \text{ if } x > m \\
+\displaystyle \int_{m}^{\infty} \frac{1}{\theta} \frac{m}{\theta^{2}} d\theta & \text{ if } x \leq m
+\end{cases}
+= \frac{m}{2x^2}\mathbf{1}_{x > m} + \frac{1}{2m}\mathbf{1}_{x \leq m}
+\end{equation}
+
+The limits change because of the validity of the range, as given in Equation 3.95. If \(x > m\), then the new maximum would be \(x\), and if \(x \leq m\), then the maximum value would remain unchanged.
+\end{flushleft}
+
+\subsubsection*{Part d}
+\begin{flushleft}
+From Eqn \ref{pred-prob-310}, we can easily write down the expressions for the predictive probability:
+\begin{gather}
+p(x = 100 | D, \alpha) = \frac{m}{20000}\mathbf{1}_{100 > m} + \frac{1}{2m}\mathbf{1}_{100 \leq m}\\
+p(x = 50 | D, \alpha) = \frac{m}{5000}\mathbf{1}_{50 > m} + \frac{1}{2m}\mathbf{1}_{50 \leq m}\\
+p(x = 150 | D, \alpha) = \frac{m}{45000}\mathbf{1}_{150 > m} + \frac{1}{2m}\mathbf{1}_{150 \leq m}
+\end{gather}
+\end{flushleft}
+
+\subsubsection*{Part e}
+The taxicab numbers are integral values, and hence it would benefit if we were to use a discrete distribution rather than a continuous one. The priors taken are technically incorrect, so the model would be better if the prior was a bit more informative.
+
 \subsection*{Exercise 3.11}
 \subsubsection*{Part a}
 \begin{flushleft}
