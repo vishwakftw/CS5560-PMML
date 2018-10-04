@@ -1,0 +1,112 @@
+\documentclass{article}
+\usepackage[margin=0.6in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bookmark}
+\usepackage{graphicx}
+\usepackage{float}
+
+\newcommand{\vct}[1]{\mathbf{#1}}
+\newcommand{\argmax}{\mathop{\mathrm{argmax}}}
+\newcommand{\argmin}{\mathop{\mathrm{argmin}}}
+
+\title{Solutions to the Assignment - 7 : CS5560 - \\
+Probabilistic Models in Machine Learning}
+\author{Vishwak Srinivasan\\
+\texttt{CS15BTECH11043}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Exercises from ML: A Probabilistic Perspective}
+\subsection*{Exercise 4.19}
+\begin{flushleft}
+There are no assumptions considered on the parameters \(\pi_{0}, \pi_{1}\), \(\mu_{0}, \mu_{1}\) and \(\Sigma_{0}, \Sigma_{1}\) except for the fact that \(\Sigma_{1} = k\Sigma_{0}\) and \(\pi_{0} = 1 - \pi_{1}\).
+
+Note that:
+\begin{gather}
+(\vct{x} - \mu_{1})^{T}\Sigma_{1}^{-1}(\vct{x} - \mu_{1}) = \frac{1}{k}(\vct{x} - \mu_{1})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{1})\\
+|2\pi \Sigma_{1}|^{-0.5} = k^{-\frac{n}{2}} |2\pi \Sigma_{0}|
+\end{gather}
+
+This means that:
+\begin{multline}
+p(y = 1 | \vct{x}; \theta) = \frac{\pi_{1}|2\pi \Sigma_{1}|^{-0.5} \exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{1}^{-1}(\vct{x} - \mu_{1})\right)}{\pi_{1}|2\pi \Sigma_{1}|^{-0.5} \exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{1}^{-1}(\vct{x} - \mu_{1})\right) + \pi_{0}|2\pi \Sigma_{0}|^{-0.5} \exp(\frac{-1}{2}\left((\vct{x} - \mu_{0})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{0})\right)}\\= \frac{\pi_{1}k^{-\frac{n}{2}} \left(\exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{1})\right)\right)^{\frac{1}{k}}}{\pi_{1}k^{-\frac{n}{2}} \left(\exp(\frac{-1}{2}\left((\vct{x} - \mu_{1})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{1})\right)\right)^{\frac{1}{k}} + (1 - \pi_{1}) \exp(\frac{-1}{2}\left((\vct{x} - \mu_{0})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{0})\right)}
+\end{multline}
+
+A special case arises if \(\mu_{1} = \mu_{0}\):
+\begin{equation}
+p(y = 1 | \vct{x} ; \theta) = \frac{\pi_{1} k^{-\frac{n}{2}}}{\pi_{1} k^{-\frac{n}{2}} + (1 - \pi_{1}) (f^{\frac{k - 1}{k}}_{\mu_{0}, \Sigma_{0}}(\vct{x}))}
+\end{equation}
+where \(f_{\mu_{0}, \Sigma_{0}}(\vct{x}) = \exp(\frac{-1}{2}(\vct{x} - \mu_{0})^{T}\Sigma_{0}^{-1}(\vct{x} - \mu_{0}))\)
+\end{flushleft}
+
+\subsection*{Exercise 7.8}
+\subsubsection*{Part a}
+Using a script, we obtained the values of the unbiased estimate of \(\hat{\sigma}^{2}\) to be \(0.016975\).
+
+\subsubsection*{Part b}
+\begin{flushleft}
+An improper prior would be that \(p(w_{0}) = 1\). Therefore:
+\begin{equation}
+p(\vct{w}) = p(w_{0})p(w_{1}) = p(w_{1}) = \frac{1}{\sqrt{2\pi}}\exp\left(\frac{-w_{1}^{2}}{2}\right)
+\end{equation}
+
+Assume that \(p(\vct{w}) = \mathcal{N}(\vct{w} | \vct{w}_{0}, \vct{V}_{0})\). Now we will show an equivalence:
+\begin{equation}
+p(\vct{w}) = \frac{1}{\sqrt{|2\pi\vct{V}_{0}|}}\exp\left(\frac{-(\vct{w} - \vct{w}_{0})^{T}\vct{V}_{0}^{-1}(\vct{w} - \vct{w}_{0})}{2}\right)
+\end{equation}
+
+Now since \(\vct{w} = [w_{0}, w_{1}]\) and denoting \(\vct{V}_{0}\) as \(\vct{U}_{0}\),
+\begin{equation}
+\label{7-8-other}
+p(\vct{w}) = \frac{1}{\sqrt{|2\pi\vct{V}_{0}|}}\exp\left(\frac{-\displaystyle\sum_{i=0}^{1}\sum_{j=0}^{1}(w_{i} - (w_{0})_{i})(w_{j} - (w_{0})_{j})U_{ij}}{2}\right)
+\end{equation}
+
+Now we can expand Eqn \ref{7-8-other} and compare terms to see that:
+\begin{itemize}
+\item \((w_{0})_{1} = 0\) and \(U_{11} = 0\)
+\item \((w_{0})_{0} = 0\) and \(U_{00} = 0\) can be arbitrary.
+\item \(U_{01} = U_{10} = 0\) has to be zero.
+\end{itemize}
+
+Unfortunately, this yields an invalid covariance matrix.
+\end{flushleft}
+
+\subsubsection*{Part c}
+\begin{flushleft}
+The net posterior can be given by:
+\begin{equation}
+p(w_{0}, w_{1} | \mathcal{D}, \sigma^{2}) \propto p(\mathcal{D} | w_{0}, w_{1}, \sigma^{2}) p(w_{0}, w_{1} | \sigma^{2})
+\end{equation}
+
+Let \(\displaystyle \sum_{i=1}^{N}(y_{i} - w_{1}x_{i}) = S_{1}\)Assuming independent outputs, expansion gives us:
+\begin{gather}
+p(w_{0}, w_{1} | \mathcal{D}, \sigma^{2}) \propto \prod_{i=1}^{N} p(y_{i}| x_{i}, w_{0}, w_{1}) \cdot p(\vct{w} | \sigma^{2}) \propto \exp\left(-\frac{1}{2\sigma^{2}}\sum_{i=1}^{N}(y_{i} - w_{0} - w_{1}x_{i})^{2} - \frac{w_{1}^{2}}{2}\right) \\
+\Rightarrow p(w_{0}, w_{1} | \mathcal{D}, \sigma^{2}) \propto \exp\left(-\frac{1}{2\sigma^{2}}\sum_{i=1}^{N}(y_{i} - w_{1}x_{i})^{2} + w_{0}^{2} - 2(y_{i} - w_{1}x_{i})w_{0} - \frac{w_{1}^{2}}{2}\right)\\
+\label{7-8-post}
+\Rightarrow p(w_{0}, w_{1} | \mathcal{D}, \sigma^{2}) \propto \exp\left(-\frac{N}{2\sigma^{2}} (w_{0} - S_{1})^{2} + \frac{1}{2\sigma^{2}N}S_{1}^{2} - \frac{1}{2\sigma^{2}}\left(\sum_{i=1}^{N}(y_{i} - w_{1}x_{i})^{2} - \frac{w_{1}^{2}}{2}\right)\right)
+\end{gather}
+
+The penultimate step results from completing the squares. Marginalizing with respect to \(w_{0}\) would give us \(p(w_{1} | \mathcal{D}, \sigma^{2})\). This is merely the integral of Eqn \ref{7-8-post} w.r.t. \(w_{0}\):
+\begin{equation}
+\int_{-\infty}^{\infty} p(w_{0}, w_{1} | \mathcal{D}, \sigma^{2}) dw_{0} \propto \exp\left(\frac{1}{2\sigma^{2}N}S_{1}^{2} - \frac{1}{2\sigma^{2}}\left(\sum_{i=1}^{N}(y_{i} - w_{1}x_{i})^{2} - \frac{w_{1}^{2}}{2}\right)\right)
+\end{equation}
+
+This is because the first term integrates to \(\frac{\sqrt{N}}{\sqrt{2\pi\sigma^2}}\), and is independent of \(w_{1}\). Now, massaging the terms further:
+\begin{gather}
+p(w_{1} | \mathcal{D}, \sigma^{2}) \propto \exp\left(-\frac{1}{2\sigma^{2}}\left(\sum_{i=1}^{N}(w_{1}x_{i} - y_{i})^{2} - \frac{1}{N}\left(\sum_{i=1}^{N}(w_{1}x_{i} - y_{i})\right)^{2} + \sigma^{2}w_{1}^{2}\right)\right)\\
+p(w_{1} | \mathcal{D}, \sigma^{2}) \propto \exp\left(-\frac{1}{2\sigma^{2}}\left(\left(\sum_{i=1}^{N}x_{i}^{2} - \frac{1}{N}\sum_{i,j=1}^{N}x_{i}x_{j} + \sigma^{2}\right)w_{1}^{2} + 2\left(\frac{1}{N}\sum_{i=1}^{N}x_{i}\sum_{i=1}^{N}y_{i} - \sum_{i=1}^{N}x_{i}y_{i}\right)\right)\right)
+\end{gather}
+
+Note that completion of squares will involve terms independent of \(w_{1}\), hence the mean and variance expressions can be taken from the above equation:
+\begin{gather}
+\mathbb{E}[w_{i} | \mathcal{D}, \sigma^{2}] = \frac{\displaystyle \sum_{i=1}^{N}x_{i}\sum_{i=1}^{N}y_{i} - \sum_{i=1}^{N}x_{i}y_{i}}{\displaystyle \sum_{i=1}^{N}x_{i}^{2} - \frac{1}{N}\sum_{i,j=1}^{N}x_{i}x_{j} + \sigma^{2}} = 0.04265\\
+\mathrm{Var}[w_{i} | \mathcal{D}, \sigma^{2}] = \frac{\sigma^{2}}{\displaystyle \sum_{i=1}^{N}x_{i}^{2} - \frac{1}{N}\sum_{i,j=1}^{N}x_{i}x_{j} + \sigma^{2}} = 1.142 \cdot 10^{-5}
+\end{gather}
+\end{flushleft}
+
+\subsubsection*{Part d}
+The 95\% credible interval is \((\mu - 2\sigma, \mu + 2\sigma) = (0.0359, 0.0494)\).
+\end{document}

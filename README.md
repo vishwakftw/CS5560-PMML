@@ -19,3 +19,6 @@ Coursework pertaining to CS5560 : Probabilistic Models in Machine Learning offer
 
 ### Week - 6
 + Bayesian Learning, Posterior calculation. Exercises from Kevin Murphy, _Machine Learning: A Probabilistic Perspective_.
+
+### Week - 7
++ More posterior calculation, Bayesian Bayes Classifier, and MAP estimate for the Naive Bayes model. Exercises from Kevin Murphy, _Machine Learning: A Probabilistic Perspective_.
