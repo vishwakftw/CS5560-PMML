@@ -96,4 +96,69 @@ Since the input features are entirely random, we can resort to randomly labeling
 
 Now let's use the same algorithm for LOO-CV. First let us consider \((N_{1} - 1)\) samples of class 1 and \(N_{2}\) samples of class 2. With \(N_{1} = N_{2}\), this means that class 2 is the predominant class, and hence the predicted label will be 2 for a validation data point. This will repeat \(N_{1}\) times for class 1. Similarly for class 2, the predicted label will be 1 for a validation data point, and this will repeat \(N_{2}\) times. Note that for all of the validation samples, the wrong class was predicted, which means that the LOO-CV error is \(100\%\)!.
 \end{flushleft}
+
+\subsection*{Exercise 6.2}
+\begin{flushleft}
+\begin{equation}
+\left(\frac{a - b}{c}\right)^{2} + \left(\frac{a - d}{f}\right)^{2} = C_{1}\left(a - \frac{C_{2}}{C_{1}}\right)^{2} + C_{3} - \frac{C_{2}^{2}}{C_{1}}
+\end{equation}
+where \(C_{1} = \frac{f^{2} + c^{2}}{c^{2}f^{2}}\), \(C_{2} = \frac{b}{c^{2}} + \frac{d}{f^{2}}\) and \(C_{3} = \frac{b^{2}}{c^{2}} + \frac{d^{2}}{f^{2}}\).
+
+Hence for \(\left(\frac{\theta_{i} - Y_{i}}{\sigma}\right)^{2} + \left(\frac{\theta_{i} - m_{0}}{\tau_{0}}\right)^{2}\), \(C_{1} = \frac{\tau_{0}^{2} + \sigma^{2}}{\sigma^{2}\tau_{0}^{2}}\), \(C_{2} = \frac{Y_{i}}{\sigma^{2}} + \frac{m_{0}}{\tau_{0}^{2}}\) and \(C_{3} = \frac{Y_{i}^{2}}{\sigma^{2}} + \frac{m_{0}^{2}}{\tau_{0}^{2}}\).
+
+This allows us to easily compute:
+\begin{multline}
+\int_{-\infty}^{\infty} p(Y_{i} | \theta_{i}, \sigma^{2}) p(\theta_{i} | m_{0}, \tau^{2}_{0}) d\theta_{i} = \int_{-\infty}^{\infty} \frac{1}{2\pi\sigma\tau_{0}} \exp\left(-\frac{1}{2}\left[\left(\frac{\theta_{i} - Y_{i}}{\sigma}\right)^{2} + \left(\frac{\theta_{i} - m_{0}}{\tau_{0}}\right)^{2}\right]\right) d\theta_{i}\\= \frac{1}{2\pi\sigma\tau_{0}}\exp\left(\frac{C_{2}^{2}}{2C_{1}} - \frac{C_{3}}{2}\right)\int_{-\infty}^{\infty} \exp\left(-\frac{(\theta_{i} - C_{2}/C_{1})^{2}}{2/(\sqrt{C_{1}})^{2}}\right)\\= \frac{1}{\sqrt{2\pi}\sigma\tau_{0}\sqrt{C_{1}}}\exp\left(\frac{C_{2}^{2}}{2C_{1}} - \frac{C_{3}}{2}\right)
+\end{multline}
+
+Now, we need:
+\begin{equation}
+\argmax_{m_{0}, \tau^{2}_{0}}\prod_{i=1}^{6} \int_{-\infty}^{\infty} p(Y_{i} | \theta_{i}, \sigma^{2}) p(\theta_{i} | m_{0}, \tau^{2}_{0}) d\theta_{i} = \argmax_{m_{0}, \tau^{2}_{0}} \sum_{i=1}^{6} \log \left(\int_{-\infty}^{\infty} p(Y_{i} | \theta_{i}, \sigma^{2}) p(\theta_{i} | m_{0}, \tau^{2}_{0}) d\theta_{i}\right)
+\end{equation}
+
+\begin{equation}
+\sum_{i=1}^{6} \log \left(\int_{-\infty}^{\infty} p(Y_{i} | \theta_{i}, \sigma^{2}) p(\theta_{i} | m_{0}, \tau^{2}_{0}) d\theta_{i}\right) = \sum_{i=1}^{6} \left(\frac{C_{2}^{2}}{2C_{1}} - \frac{C_{3}}{2} - \frac{1}{2}\log C_{1} - \log \tau_{0}\right) \equiv F(m_{0}, \tau_{0})
+\end{equation}
+
+Taking the derivative of \(F(m_{0}, \tau_{0})\) w.r.t \(m_{0}\) and setting to \(0\):
+\begin{equation}
+\sum_{i=1}^{6} \frac{C_{2}}{C_{1}}\cdot\frac{1}{\tau_{0}^{2}} - \frac{m_{0}}{\tau_{0}^{2}} = 0 \Rightarrow m_{0} = \frac{1}{6}\sum_{i=1}^{6}Y_{i} = \boxed{1527.5}
+\end{equation}
+
+Taking the derivative of \(F(m_{0}, \tau_{0})\) w.r.t. \(\tau_{0}\) and setting to \(0\):
+\begin{equation}
+\label{tau-eqn}
+\sum_{i=1}^{6} \left(\frac{C_{2}}{C_{1}}\cdot\frac{-2m_{0}}{\tau_{0}^{3}} + \frac{C_{2}^{2}}{C_{1}^{2}}\cdot\frac{1}{\tau_{0}^{3}} + \frac{m_{0}^{2}}{\tau_{0}^{3}} + \frac{1}{C_{1}}\cdot\frac{1}{\tau_{0}^{3}} - \frac{1}{\tau_{0}}\right) = 0
+\end{equation}
+
+Note that \(\sum_{i=1}^{6}\frac{C_{2}}{C_{1}} = 6m_{0}\), and hence \(\frac{C_{2}}{C_{1}}\cdot\frac{-2m_{0}}{\tau_{0}^{3}} = -\frac{12m_{0}^{2}}{\tau_{0}^{3}}\). Also note that \(\frac{1}{C_{1}}\cdot\frac{1}{\tau_{0}^{3}} - \frac{1}{\tau_{0}} = -\frac{\tau_{0}}{\tau_{0}^{2} + \sigma^{2}}\). The complication arises in:
+\begin{equation}
+\sum_{i=1}^{6}\frac{C_{2}^{2}}{C_{1}^{2}} = \sum_{i=1}^{6}\left(\frac{\tau_{0}^{2}Y_{i} + m_{0}\sigma^{2}}{\sigma^{2} + \tau_{0}^{2}}\right)^{2} = \frac{\tau_{0}^{4}\sum_{i} Y_{i}^{2}}{\sigma^{4} + \tau_{0}^{4} + 2\sigma^{2}\tau_{0}^{2}} + \frac{6m_{0}^{2}\sigma^{4}}{\sigma^{4} + \tau_{0}^{4} + 2\sigma^{2}\tau_{0}^{2}} + \frac{12m_{0}^{2}\sigma^{2}\tau_{0}^{2}}{\sigma^{4} + \tau_{0}^{4} + 2\sigma^{2}\tau_{0}^{2}}
+\end{equation}
+
+Now if we substitute the above equation in Eqn \ref{tau-eqn}:
+\begin{multline}
+-6m_{0}^{2}(\tau_{0}^4 + \sigma^{4} + 2\tau_{0}^{2}\sigma^{2}) + \tau_{0}^{4}\sum_{i=1}^{6} Y_{i}^{2} + 6m_{0}^{2}\sigma^{4} + 12m_{0}^{2}\sigma^{2}\tau_{0}^{2} = \tau_{0}^{4} (\tau_{0}^{2} + \sigma^{2}) \\
+\Rightarrow \tau_{0}^{4}\sum_{i=1}^{6}(Y_{i}^{2} - m_{0}^{2}) = \tau_{0}^{4}(\tau_{0}^{2} + \sigma^{2}) \Rightarrow \sum_{i=1}^{6}(Y_{i}^{2} - m_{0}^{2}) - \sigma^{2} = \tau_{0}^{2} = \boxed{10771.5}
+\end{multline}
+\end{flushleft}
+
+\section*{Starred Problems}
+\subsection*{Problem 1: Exercise 5.7 from ML: A Probabilistic Perspective}
+\begin{flushleft}
+Note that
+\begin{equation}
+p(\Delta | \mathcal{D}) = p^{BMA}(\Delta)
+\end{equation}
+
+Hence we can write the KL-divergence between \(p^{BMA}\) and \(p^{m}\) for all \(m \in \mathcal{M}\) as:
+\begin{equation}
+KL(p^{BMA} || p^{m}) = \mathbb{E}_{p(\Delta | \mathcal{D})} \left[\log\left(\frac{p^{BMA}(\Delta)}{p^{m}(\Delta)}\right)\right] = \mathbb{E}_{p(\Delta | \mathcal{D})} [\log p^{BMA}(\Delta)] - \mathbb{E}_{p(\Delta | \mathcal{D})} [\log p^{m}(\Delta)]
+\end{equation}
+
+Since the KL-divergence is non-negative:
+\begin{multline}
+-\mathbb{E}_{p(\Delta | \mathcal{D})} [\log p^{BMA}(\Delta)] + \mathbb{E}_{p(\Delta | \mathcal{D})} [\log p^{m}(\Delta)] \leq 0 \\\Rightarrow \mathbb{E}_{p(\Delta | \mathcal{D})} [\log p^{m}(\Delta)] \leq \mathbb{E}_{p(\Delta | \mathcal{D})} [\log p^{BMA}(\Delta)] \\ \Rightarrow \mathbb{E}_{p(\Delta | \mathcal{D})} [-\log p^{m}(\Delta)] \geq \mathbb{E}_{p(\Delta | \mathcal{D})} [-\log p^{BMA}(\Delta)] \\ \Rightarrow \mathbb{E}[L(\Delta, p^{m})] \geq \mathbb{E}[L(\Delta, p^{BMA})]
+\end{multline}
+\end{flushleft}
 \end{document}
