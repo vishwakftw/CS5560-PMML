@@ -25,3 +25,6 @@ Coursework pertaining to CS5560 : Probabilistic Models in Machine Learning offer
 
 ### Week - 8
 + Model selection, Cross-validation. Exercises from Kevin Murphy, _Machine Learning: A Probabilistic Perspective_.
+
+### Week - 9
++ Implementation of Gaussian Mixture Models using the EM algorithm and by gradient descent over a loss function. Dataset used is [this](https://archive.ics.uci.edu/ml/datasets/seismic-bumps).

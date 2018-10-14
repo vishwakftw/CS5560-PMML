@@ -76,17 +76,17 @@ From the dataset, it is easy to calculate the MLE for \(\mathcal{D}_{-i}\) for a
 \end{tabular}
 \end{center}
 
-Now computing the metric \(L(M_{1})\):
+Now computing the metric \(L(M_{2})\):
 \begin{equation}
-L(M_{1}) = \log\frac{1}{4} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{4} + \log\frac{1}{6} + \log\frac{1}{9} = 0.245
+L(M_{2}) = \log\frac{1}{4} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{4} + \log\frac{1}{6} + \log\frac{1}{9} = 0.245
 \end{equation}
 
-And similarly \(L(M_{2})\):
+And similarly \(L(M_{4})\):
 \begin{equation}
-L(M_{2}) = \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log 0 = -\infty
+L(M_{4}) = \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log\frac{1}{6} + \log 0 = -\infty
 \end{equation}
 
-LOO-CV will pick \(M_{1}\) because the likelihood is higher than that of \(M_{2}\).
+LOO-CV will pick \(M_{2}\) because the likelihood is higher than that of \(M_{4}\).
 \end{flushleft}
 
 \subsection*{Exercise 6.1}
@@ -138,8 +138,8 @@ Note that \(\sum_{i=1}^{6}\frac{C_{2}}{C_{1}} = 6m_{0}\), and hence \(\frac{C_{2
 
 Now if we substitute the above equation in Eqn \ref{tau-eqn}:
 \begin{multline}
--6m_{0}^{2}(\tau_{0}^4 + \sigma^{4} + 2\tau_{0}^{2}\sigma^{2}) + \tau_{0}^{4}\sum_{i=1}^{6} Y_{i}^{2} + 6m_{0}^{2}\sigma^{4} + 12m_{0}^{2}\sigma^{2}\tau_{0}^{2} = \tau_{0}^{4} (\tau_{0}^{2} + \sigma^{2}) \\
-\Rightarrow \tau_{0}^{4}\sum_{i=1}^{6}(Y_{i}^{2} - m_{0}^{2}) = \tau_{0}^{4}(\tau_{0}^{2} + \sigma^{2}) \Rightarrow \sum_{i=1}^{6}(Y_{i}^{2} - m_{0}^{2}) - \sigma^{2} = \tau_{0}^{2} = \boxed{10771.5}
+-6m_{0}^{2}(\tau_{0}^4 + \sigma^{4} + 2\tau_{0}^{2}\sigma^{2}) + \tau_{0}^{4}\sum_{i=1}^{6} Y_{i}^{2} + 6m_{0}^{2}\sigma^{4} + 12m_{0}^{2}\sigma^{2}\tau_{0}^{2} = 6\tau_{0}^{4} (\tau_{0}^{2} + \sigma^{2}) \\
+\Rightarrow \tau_{0}^{4}\sum_{i=1}^{6}(Y_{i}^{2} - m_{0}^{2}) = 6\tau_{0}^{4}(\tau_{0}^{2} + \sigma^{2}) \Rightarrow \frac{1}{6}\sum_{i=1}^{6}(Y_{i}^{2} - m_{0}^{2}) - \sigma^{2} = \tau_{0}^{2} = \boxed{1378.58}
 \end{multline}
 \end{flushleft}
 
