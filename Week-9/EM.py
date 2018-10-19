@@ -18,31 +18,48 @@ class GMM(object):
         self.pi = np.full((self.k, ), 1 / self.k)
 
         # Cluster mean vectors
-        # We shuffle the datapoints randomly, partition it into `k` pieces
-        # and take the mean of the partitions as an initialization
-        self.mu = [np.mean(xsplit, axis=0) for xsplit in np.array_split(np.random.permutation(self.X), self.k)]
+        # This is assigned randomly
+        self.mu = [np.random.randn(self.X.shape[1]) for _ in range(self.k)]
 
         # Cluster covariance matrices
-        # We assign identity matrices for all clusters
-        self.sigma = [np.identity(self.X.shape[1]) for _ in range(self.k)]
+        # The second step is to make the matrices PD
+        self.sigma = [np.random.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
+        self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
 
         # Responsibility parameters
         # Storing it column major because of nature of updates made
         self.r = np.zeros((self.X.shape[0], self.k), order='F')
 
-    def _E_step(self, r, mus, sigmas, X):
+    def _E_step(self, r, pis, mus, sigmas, X):
         """
         Function to perform the E-step - re-assigning responsibility probabilities for every datapoint
+
+        Arguments:
+            - r : responsibility parameters
+            - pis : cluster probabilities
+            - mus : mean vectors
+            - sigmas : covariance matrices
+            - X : data
+
+        Returns:
+            - r : new responsibility parameters
         """
         for k_ in range(r.shape[1]):
             mvn_k = mvn(mus[k_], sigmas[k_])
-            r[:, k_] = mvn_k.pdf(X)
+            r[:, k_] = pis[k_] * mvn_k.pdf(X)
         r = r / np.sum(r, axis=1, keepdims=True)
         return r
 
     def _M_step(self, r, X):
         """
         Function to perform the M-step - re-assigning the cluster fractions, means and covariances
+
+        Arguments:
+            - r : responsibility parameters
+            - X : data
+
+        Returns:
+            - (pi, mus, sigmas) : New cluster probabilities, cluster means and covariances
         """
         pi = np.sum(r, axis=0) / self.X.shape[0]
         mus = [None for _ in range(r.shape[1])]
@@ -70,7 +87,7 @@ class GMM(object):
         LLs = []
 
         for i in range(1, iterations + 1):
-            r = self._E_step(self.r, self.mu, self.sigma, self.X)
+            r = self._E_step(self.r, self.pi, self.mu, self.sigma, self.X)
             self.r = r
             pi, mu, sigma = self._M_step(self.r, self.X)
             self.pi, self.mu, self.sigma = pi, mu, sigma

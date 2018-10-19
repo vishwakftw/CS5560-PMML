@@ -17,10 +17,13 @@ data = np.genfromtxt(p.dataset, delimiter=',')
 if p.algorithm == 'EM':
     gmm = EGMM(X=data, k=p.k)
     lls = gmm.fit(iterations=p.iters)
+    nlls = [-ll for ll in lls]
 
 else:
 	gmm = GGMM(X=data, k=p.k)
 	lls = gmm.fit(iterations=p.iters)
+	nlls = [-ll for ll in lls]
 
-plt.plot(list(range(1, p.iters + 1)), lls, 'b-', marker='o', mfc='k', mec='k', ms=5.0, lw=3.0)
+plt.plot(list(range(1, p.iters + 1)), nlls, 'b-', marker='o', mfc='k', mec='k', ms=5.0, lw=3.0)
+plt.title(p.algorithm, fontsize=20)
 plt.show()
