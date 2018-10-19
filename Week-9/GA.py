@@ -28,7 +28,7 @@ class GMM(object):
 
     def _get_probability_matrix(self, X, cluster_prob, means, covariances):
         """
-        Function to return the matrix of size d x m where entry [j,i] represents
+        Function to return the matrix of size m x d where entry [i,j] represents
         the probability of datapoint i w.r.t. jth MVN
 
         Arguments:
@@ -56,7 +56,12 @@ class GMM(object):
         Returns:
             - gradient of cluster probability vector
         """
-        return 1 / cluster_prob
+        prob_matrix = self._get_probability_matrix(X, cluster_prob, means, covariances)
+        pi_grads = []
+        for k_ in range(len(means)):
+            weight = prob_matrix[:, k_] / prob_matrix[:, k_].sum()
+            pi_grads.append(weight.sum() / cluster_prob[k_])
+        return pi_grads
 
     def _mu_grad(self, X, cluster_prob, means, covariances):
         """
@@ -108,8 +113,7 @@ class GMM(object):
         return sigma_grads
 
     def _get_log_likelihood(self, X, pis, mus, sigmas):
-        all_probs = np.array([mvn(mus[k_], sigmas[k_]).pdf(X) for k_ in range(len(mus))])
-        all_probs = pis.reshape(-1, 1) * all_probs
+        all_probs = self._get_probability_matrix(X, pis, mus, sigmas).T
         assert all_probs.shape == (len(mus), X.shape[0]), "Size mismatch in _get_log_likelihood (all_probs)"
         ll = all_probs.sum(axis=0)
         assert ll.shape == (X.shape[0],), "Size mismatch in _get_log_likelihood (ll)"
@@ -138,17 +142,18 @@ class GMM(object):
             covs_grad = self._sigma_grad(X, cluster_prob, means, covariances)
             means_grad = self._mu_grad(X, cluster_prob, means, covariances)
             cluster_prob_grad = self._pi_grad(X, cluster_prob, means, covariances)
-            updated_covs = [covariances[k_] + alpha * covs_grad[k_] + 1e-06 * np.identity(X.shape[1])
+            updated_covs = [covariances[k_] + alpha * covs_grad[k_]
                             for k_ in range(len(means))]
             updated_means = [means[k_] + alpha * means_grad[k_] for k_ in range(len(means))]
-            updated_cluster_prob = cluster_prob + alpha * cluster_prob_grad
+            updated_cluster_prob = np.array([cluster_prob[k_] + alpha * cluster_prob_grad[k_]
+                                             for k_ in range(len(means))])
             try:
                 updated_ll = self._get_log_likelihood(X, updated_cluster_prob, updated_means, updated_covs)
             except ValueError:
                 alpha = alpha * tau
                 continue
             if updated_ll > initial_ll:
-                return (updated_cluster_prob, updated_means, updated_covs, updated_ll)
+                return (updated_cluster_prob, updated_means, updated_covs, updated_ll, alpha)
             alpha = alpha * tau
 
     def fit(self, iterations=100):
@@ -164,9 +169,8 @@ class GMM(object):
         LLs = []
 
         for i in range(1, iterations + 1):
-            pi, mu, sigma, LL = self._choose_step(self.X, self.pi, self.mu, self.sigma, alpha=20)
-            self.test_grads(self.X, self.pi, self.mu, self.sigma)
+            pi, mu, sigma, LL, ss = self._choose_step(self.X, self.pi, self.mu, self.sigma)
             self.pi, self.mu, self.sigma = pi, mu, sigma
-            print("{} / {}\tLog Likelihood = {}".format(i, iterations, LL))
+            print("{} / {}\tLog Likelihood = {}, final step size = {}".format(i, iterations, LL, ss))
             LLs.append(LL)
         return LL
