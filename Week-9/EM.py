@@ -8,8 +8,9 @@ class GMM(object):
     Arguments:
         - X : input dataset
         - k : number of mixtures to consider
+        - seed : Integer for setting seed. Default: None
     """
-    def __init__(self, X, k):
+    def __init__(self, X, k, seed=None):
         self.X = X
         self.k = k
 
@@ -17,14 +18,21 @@ class GMM(object):
         # Cluster fraction parameter \pi
         self.pi = np.full((self.k, ), 1 / self.k)
 
-        # Cluster mean vectors
-        # This is assigned randomly
-        self.mu = [np.random.randn(self.X.shape[1]) for _ in range(self.k)]
+        if seed is None:
+            # Cluster mean vectors
+            # This is assigned randomly
+            self.mu = [np.random.randn(self.X.shape[1]) for _ in range(self.k)]
 
-        # Cluster covariance matrices
-        # The second step is to make the matrices PD
-        self.sigma = [np.random.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
-        self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
+            # Cluster covariance matrices
+            # The second step is to make the matrices PD
+            self.sigma = [np.random.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
+            self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
+        else:
+            rs = np.random.RandomState(seed)
+            self.mu = [rs.randn(self.X.shape[1]) for _ in range(self.k)]
+
+            self.sigma = [rs.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
+            self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
 
         # Responsibility parameters
         # Storing it column major because of nature of updates made

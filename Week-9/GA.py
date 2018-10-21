@@ -8,8 +8,9 @@ class GMM(object):
     Arguments:
         - X : input dataset
         - k : number of mixtures to consider
+        - seed : Integer for setting seed. Default: None
     """
-    def __init__(self, X, k):
+    def __init__(self, X, k, seed=None):
         self.X = X
         self.k = k
 
@@ -17,14 +18,21 @@ class GMM(object):
         # Cluster fraction parameter \pi
         self.pi = np.full((self.k, ), 1 / self.k)
 
-        # Cluster mean vectors
-        # This is assigned randomly
-        self.mu = [np.random.randn(self.X.shape[1]) for _ in range(self.k)]
+        if seed is None:
+            # Cluster mean vectors
+            # This is assigned randomly
+            self.mu = [np.random.randn(self.X.shape[1]) for _ in range(self.k)]
 
-        # Cluster covariance matrices
-        # The second step is to make the matrices PD
-        self.sigma = [np.random.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
-        self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
+            # Cluster covariance matrices
+            # The second step is to make the matrices PD
+            self.sigma = [np.random.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
+            self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
+        else:
+            rs = np.random.RandomState(seed)
+            self.mu = [rs.randn(self.X.shape[1]) for _ in range(self.k)]
+
+            self.sigma = [rs.randn(self.X.shape[1], self.X.shape[1]) for _ in range(self.k)]
+            self.sigma = [np.matmul(s.T, s) + 1e-05 * np.identity(self.X.shape[1]) for s in self.sigma]
 
     def _get_probability_matrix(self, X, cluster_prob, means, covariances):
         """
@@ -57,10 +65,14 @@ class GMM(object):
             - gradient of cluster probability vector
         """
         prob_matrix = self._get_probability_matrix(X, cluster_prob, means, covariances)
+        # m size vector, representing the sum of probs for all clusters
+        prob_matrix_reduce_k = prob_matrix.sum(axis=1)
         pi_grads = []
         for k_ in range(len(means)):
-            weight = prob_matrix[:, k_] / prob_matrix[:, k_].sum()
-            pi_grads.append(weight.sum() / cluster_prob[k_])
+            pi_grad = 0.0
+            for i in range(0, X.shape[0]):
+                pi_grad += (prob_matrix[i, k_] / prob_matrix_reduce_k[i])
+            pi_grads.append(pi_grad / cluster_prob[k_])
         return pi_grads
 
     def _mu_grad(self, X, cluster_prob, means, covariances):
@@ -77,14 +89,15 @@ class GMM(object):
             - list of vectors consisting of derivatives of individual mean vectors
         """
         prob_matrix = self._get_probability_matrix(X, cluster_prob, means, covariances)
+        # m size vector, representing the sum of probs for all clusters
+        prob_matrix_reduce_k = prob_matrix.sum(axis=1)
         mu_grads = []
-        sigmas_inv = [np.linalg.inv(covariances[k_]) for k_ in range(len(means))]
         for k_ in range(len(means)):
-            weights = prob_matrix[:, k_] / prob_matrix[:, k_].sum()
-            weighted_data = -np.average(X, weights=weights, axis=0)
-            g1 = np.dot(sigmas_inv[k_], weighted_data)
-            assert g1.shape == means[k_].shape, "Size mismatch (_mu_grad)"
-            mu_grads.append(g1)
+            mu_grad = np.zeros((X.shape[1],))
+            for i in range(0, X.shape[0]):
+                mu_grad += ((prob_matrix[i, k_] / prob_matrix_reduce_k[i]) * (means[k_] - X[i]))
+            mu_grad = np.matmul(-np.linalg.inv(covariances[k_]), mu_grad)
+            mu_grads.append(mu_grad)
         return mu_grads
 
     def _sigma_grad(self, X, cluster_prob, means, covariances):
@@ -101,14 +114,19 @@ class GMM(object):
             - list of matrices consisting of derivatives of individual matrices
         """
         prob_matrix = self._get_probability_matrix(X, cluster_prob, means, covariances)
+        # m size vector, representing the sum of probs for all clusters
+        prob_matrix_reduce_k = prob_matrix.sum(axis=1)
         sigma_grads = []
         for k_ in range(len(means)):
-            all_outer_prods = np.array([np.outer(X[i] - means[k_], X[i] - means[k_]) for i in range(len(X))])
-            weights = prob_matrix[:, k_] / prob_matrix[:, k_].sum()
+            const_weight = 0.0
+            g2 = np.zeros((X.shape[1], X.shape[1]))
             cov_inv = np.linalg.inv(covariances[k_])
-            g1 = -cov_inv * 0.5
-            g2 = np.average(all_outer_prods, weights=weights, axis=0) * 0.5
-            assert g1.shape == g2.shape, "Size mismatch (_sigma_grad)"
+            for i in range(0, X.shape[0]):
+                sum_term = prob_matrix[i, k_] / prob_matrix_reduce_k[i]
+                const_weight += sum_term
+                tmp_vec = np.matmul(cov_inv, X[i] - means[k_])
+                g2 += np.outer(tmp_vec, tmp_vec) * sum_term
+            g1 = -const_weight * 0.5 * cov_inv
             sigma_grads.append(g1 + g2)
         return sigma_grads
 
@@ -120,7 +138,7 @@ class GMM(object):
         ll = np.log(ll).sum()
         return ll
 
-    def _choose_step(self, X, cluster_prob, means, covariances, alpha=1, tau=0.5):
+    def _choose_step(self, X, cluster_prob, means, covariances, alpha=1.0, tau=0.5):
         """
         Function to get the best step size based on Wolfe conditions. Temporary steps are taken with
         adaptive step size to check if the Wolfe condition is met, and returns the update with the highest
@@ -131,7 +149,7 @@ class GMM(object):
             - cluster_prob : cluster probability
             - means : mean vectors
             - covariances : covariance matrices
-            - alpha : starting learning rate. Default: 1
+            - alpha : starting learning rate. Default: 1.0
             - tau : multiplicative factor. Default: 0.5
 
         Returns:
@@ -142,8 +160,8 @@ class GMM(object):
             covs_grad = self._sigma_grad(X, cluster_prob, means, covariances)
             means_grad = self._mu_grad(X, cluster_prob, means, covariances)
             cluster_prob_grad = self._pi_grad(X, cluster_prob, means, covariances)
-            updated_covs = [covariances[k_] + alpha * covs_grad[k_]
-                            for k_ in range(len(means))]
+            updated_covs = [covariances[k_] + alpha * covs_grad[k_] + 1e-06 * np.identity(X.shape[1])
+                            for k_ in range(len(means))]  # to make the grads PD
             updated_means = [means[k_] + alpha * means_grad[k_] for k_ in range(len(means))]
             updated_cluster_prob = np.array([cluster_prob[k_] + alpha * cluster_prob_grad[k_]
                                              for k_ in range(len(means))])
@@ -169,8 +187,9 @@ class GMM(object):
         LLs = []
 
         for i in range(1, iterations + 1):
-            pi, mu, sigma, LL, ss = self._choose_step(self.X, self.pi, self.mu, self.sigma)
+            pi, mu, sigma, LL, ss = self._choose_step(self.X, self.pi, self.mu, self.sigma,
+                                                      alpha=1.15, tau=0.675)
             self.pi, self.mu, self.sigma = pi, mu, sigma
             print("{} / {}\tLog Likelihood = {}, final step size = {}".format(i, iterations, LL, ss))
             LLs.append(LL)
-        return LL
+        return LLs
